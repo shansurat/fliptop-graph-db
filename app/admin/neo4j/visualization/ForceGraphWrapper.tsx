@@ -38,6 +38,13 @@ export default function GraphClient({ graphData }: { graphData: GraphData }) {
   const [selectedFormat, setSelectedFormat] = useState<string>('All');
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+
+  // Reset selection on filter changes
+  useEffect(() => {
+    setSelectedNodeId(null);
+  }, [selectedYear, graphMode, selectedMatchType, selectedFormat]);
+
   const availableYears = useMemo(() => {
     const years = new Set<number>();
     graphData.links.forEach(link => {
@@ -101,6 +108,30 @@ export default function GraphClient({ graphData }: { graphData: GraphData }) {
     return { nodes, links };
   }, [graphData, selectedYear, graphMode, selectedMatchType, selectedFormat]);
 
+  const { highlightNodes, highlightLinks } = useMemo(() => {
+    const hNodes = new Set<string>();
+    const hLinks = new Set<any>();
+
+    if (selectedNodeId) {
+      hNodes.add(selectedNodeId);
+
+      displayData.links.forEach(link => {
+        const sourceId = typeof link.source === 'object' ? link.source.id : link.source;
+        const targetId = typeof link.target === 'object' ? link.target.id : link.target;
+        
+        if (sourceId === selectedNodeId) {
+          hLinks.add(link);
+          hNodes.add(targetId);
+        } else if (targetId === selectedNodeId) {
+          hLinks.add(link);
+          hNodes.add(sourceId);
+        }
+      });
+    }
+
+    return { highlightNodes: hNodes, highlightLinks: hLinks };
+  }, [selectedNodeId, displayData]);
+
   useEffect(() => {
     if (containerRef.current) {
       const updateDimensions = () => {
@@ -116,13 +147,7 @@ export default function GraphClient({ graphData }: { graphData: GraphData }) {
       // Auto-fit after data loads or filters
       setTimeout(() => {
         if (fgRef.current) {
-          if (graphMode === 'Hierarchy') {
-            // Apply strong repulsive force to prevent nodes from clumping vertically
-            fgRef.current.d3Force('charge').strength(-400);
-            fgRef.current.d3Force('link').distance(100);
-          } else {
-            fgRef.current.d3Force('charge').strength(-30);
-          }
+          fgRef.current.d3Force('charge').strength(-30);
           // Re-heat simulation
           fgRef.current.d3ReheatSimulation();
           fgRef.current.zoomToFit(400);
@@ -208,9 +233,27 @@ export default function GraphClient({ graphData }: { graphData: GraphData }) {
           height={dimensions.height}
           graphData={displayData}
           nodeLabel="name"
-          nodeVal="val"
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          nodeVal={(node: any) => {
+            let baseVal = node.val || 1;
+            if (graphMode === 'Hierarchy') {
+              // Exaggerate differences: make 1-battle nodes tiny, but heavily scale up veterans
+              baseVal = Math.pow(baseVal, 1.8) * 0.02;
+              // Ensure a minimum visibility size
+              baseVal = Math.max(0.1, baseVal);
+            }
+            if (selectedNodeId) {
+              if (node.id === selectedNodeId) return baseVal * 2.5;
+              if (highlightNodes.has(node.id)) return baseVal * 1.8;
+            }
+            return baseVal;
+          }}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           nodeColor={(node: any) => {
+            if (selectedNodeId) {
+              if (node.id === selectedNodeId) return '#FFFFFF';
+              if (!highlightNodes.has(node.id)) return '#333333'; // Dimmed
+            }
             if (node.group === 'Emcee') return '#5E87C9';
             if (node.group === 'Event') return '#ffb84d';
             return '#888888';
@@ -219,6 +262,10 @@ export default function GraphClient({ graphData }: { graphData: GraphData }) {
           nodeResolution={16}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           linkColor={(link: any) => {
+            if (selectedNodeId) {
+              if (highlightLinks.has(link)) return '#FFFFFF';
+              return '#222222'; // Dimmed
+            }
             if (link.type === 'ATTENDED') return '#ffb84d';
             if (link.match_type === 'tournament') return '#FFD700';
             if (link.type === 'DEFEATED') return '#ff4d4d';
@@ -227,12 +274,17 @@ export default function GraphClient({ graphData }: { graphData: GraphData }) {
           linkOpacity={0.6}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           linkWidth={(link: any) => {
+            let baseWidth = 0.5;
             if (link.type === 'DEFEATED') {
               // Team battles get thicker links
-              if (['2v2', '3v3', '5v5'].includes(link.match_format)) return 2;
-              return 1;
+              if (['2v2', '3v3', '5v5'].includes(link.match_format)) baseWidth = 2;
+              else baseWidth = 1;
             }
-            return 0.5;
+            if (selectedNodeId) {
+              if (highlightLinks.has(link)) return baseWidth * 4;
+              return 0.1; // Very thin for dimmed links
+            }
+            return baseWidth;
           }}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           linkDirectionalArrowLength={(link: any) => link.type === 'DEFEATED' ? 4 : link.type === 'ATTENDED' ? 3 : 0}
@@ -240,6 +292,10 @@ export default function GraphClient({ graphData }: { graphData: GraphData }) {
           // Directional particles — visually encode match format
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           linkDirectionalParticles={(link: any) => {
+            if (selectedNodeId) {
+              if (highlightLinks.has(link)) return 4;
+              return 0; // No particles on unhighlighted links
+            }
             if (link.type === 'ATTENDED') return 0;
             const fmt = link.match_format;
             if (fmt === 'royal_rumble') return 6;
@@ -251,12 +307,18 @@ export default function GraphClient({ graphData }: { graphData: GraphData }) {
           }}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           linkDirectionalParticleSpeed={(link: any) => {
+            if (selectedNodeId && highlightLinks.has(link)) {
+              return -0.01; // Negative speed reverses flow (In for win, Out for defeat)
+            }
             if (link.match_type === 'tournament') return 0.008;
             if (link.match_format === 'royal_rumble') return 0.012;
             return 0.004;
           }}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           linkDirectionalParticleWidth={(link: any) => {
+            if (selectedNodeId && highlightLinks.has(link)) {
+              return 5; // Extra large particles for highlighted links
+            }
             if (link.match_type === 'tournament') return 3;
             if (['2v2', '3v3', '5v5'].includes(link.match_format)) return 2.5;
             if (link.match_format === 'royal_rumble') return 2;
@@ -264,9 +326,17 @@ export default function GraphClient({ graphData }: { graphData: GraphData }) {
           }}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           linkDirectionalParticleColor={(link: any) => {
+            if (selectedNodeId && highlightLinks.has(link)) {
+              if (link.type === 'DEFEATED') {
+                const sourceId = typeof link.source === 'object' ? link.source.id : link.source;
+                if (sourceId === selectedNodeId) return '#4ade80'; // Green (Win)
+                return '#f87171'; // Red (Defeat)
+              }
+              return '#FFFFFF';
+            }
             if (link.match_type === 'tournament') return '#FFD700';
             if (link.match_format === 'royal_rumble') return '#FF6B6B';
-            if (link.match_type === 'promo') return '#88E088';
+            if (link.type === 'ATTENDED') return '#ffb84d';
             return '#ff4d4d';
           }}
           backgroundColor="#0a0a0a"
@@ -278,6 +348,7 @@ export default function GraphClient({ graphData }: { graphData: GraphData }) {
             node.fz = undefined;
           }}
           onNodeClick={(node: any) => {
+            setSelectedNodeId(node.id === selectedNodeId ? null : node.id);
             if (fgRef.current) {
               // Increase distance for a wider field of view when focused
               const distance = 200;
@@ -290,8 +361,7 @@ export default function GraphClient({ graphData }: { graphData: GraphData }) {
               );
             }
           }}
-          dagMode={graphMode === 'Hierarchy' ? 'td' : undefined}
-          dagLevelDistance={graphMode === 'Hierarchy' ? 300 : undefined}
+          onBackgroundClick={() => setSelectedNodeId(null)}
           onEngineStop={() => {
             if (graphMode === 'Hierarchy' && fgRef.current) {
               fgRef.current.zoomToFit(400);
