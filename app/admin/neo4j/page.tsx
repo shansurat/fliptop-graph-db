@@ -20,9 +20,9 @@ export default async function Neo4jAdminPage() {
   }
 
   return (
-    <div className="container mx-auto py-12 px-8 max-w-4xl min-h-screen text-[#cfcfcf]">
+    <div className="w-full">
       <div className="mb-10">
-        <h1 className="text-3xl font-semibold text-[#FFFFFF] tracking-tight mb-2">Neo4j Management</h1>
+        <h1 className="text-3xl font-semibold text-[#FFFFFF] tracking-tight mb-2">Emcees</h1>
         <p className="text-[#A3A3A3] text-sm">
           Directly manage graph database nodes and synchronize records from Supabase.
         </p>
