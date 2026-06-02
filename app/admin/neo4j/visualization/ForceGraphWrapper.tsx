@@ -229,10 +229,10 @@ export default function GraphClient({ graphData }: { graphData: GraphData }) {
           linkWidth={(link: any) => {
             if (link.type === 'DEFEATED') {
               // Team battles get thicker links
-              if (['2v2', '3v3', '5v5'].includes(link.match_format)) return 4;
-              return 2;
+              if (['2v2', '3v3', '5v5'].includes(link.match_format)) return 2;
+              return 1;
             }
-            return 1;
+            return 0.5;
           }}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           linkDirectionalArrowLength={(link: any) => link.type === 'DEFEATED' ? 4 : link.type === 'ATTENDED' ? 3 : 0}
@@ -270,7 +270,25 @@ export default function GraphClient({ graphData }: { graphData: GraphData }) {
             return '#ff4d4d';
           }}
           backgroundColor="#0a0a0a"
-          enableNodeDrag={false}
+          enableNodeDrag={true}
+          onNodeDragEnd={(node: any) => {
+            // Unpin the node after dragging so the physics simulation takes over again
+            node.fx = undefined;
+            node.fy = undefined;
+            node.fz = undefined;
+          }}
+          onNodeClick={(node: any) => {
+            if (fgRef.current) {
+              const distance = 40;
+              const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
+
+              fgRef.current.cameraPosition(
+                { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio }, // new position
+                node, // lookAt ({ x, y, z })
+                1500  // ms transition duration
+              );
+            }
+          }}
           dagMode={graphMode === 'Hierarchy' ? 'td' : undefined}
           dagLevelDistance={graphMode === 'Hierarchy' ? 200 : undefined}
           onEngineStop={() => {
