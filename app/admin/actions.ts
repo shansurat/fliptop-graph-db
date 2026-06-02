@@ -87,11 +87,38 @@ export async function updateEmcee(id: string, stage_name: string, hometown: stri
       );
     });
     
-    revalidatePath('/admin/neo4j');
+    revalidatePath('/admin');
     return { success: true };
   } catch (error: unknown) {
     console.error('Update error:', error);
     const message = error instanceof Error ? error.message : 'Failed to update Emcee';
+    return { success: false, error: message };
+  } finally {
+    await session.close();
+  }
+}
+
+export async function createEmcee(stage_name: string, hometown: string) {
+  const driver = getNeo4jDriver();
+  const session = driver.session();
+  
+  try {
+    const id = crypto.randomUUID();
+    await session.executeWrite(async (tx) => {
+      await tx.run(
+        `
+        CREATE (e:Emcee {id: $id, stage_name: $stage_name, hometown: $hometown})
+        RETURN e
+        `,
+        { id, stage_name, hometown }
+      );
+    });
+    
+    revalidatePath('/admin');
+    return { success: true, id };
+  } catch (error: unknown) {
+    console.error('Create error:', error);
+    const message = error instanceof Error ? error.message : 'Failed to create Emcee';
     return { success: false, error: message };
   } finally {
     await session.close();
@@ -137,7 +164,7 @@ export async function syncBattlesFromSupabase() {
   }
 }
 
-export async function updateBattle(id: string, name: string, match_type: string, status: string) {
+export async function updateBattle(id: string, name: string, match_type: string, status: string, event_id: string | null = null) {
   if (!id) return { success: false, error: 'ID is required' };
   
   const driver = getNeo4jDriver();
@@ -149,17 +176,71 @@ export async function updateBattle(id: string, name: string, match_type: string,
         `
         MATCH (b:Battle {id: $id})
         SET b.name = $name, b.match_type = $match_type, b.status = $status
+        WITH b
+        OPTIONAL MATCH (b)-[r:HELD_AT]->()
+        DELETE r
+        WITH b
+        CALL {
+          WITH b
+          WITH b WHERE $event_id IS NOT NULL
+          MATCH (e:Event {id: $event_id})
+          MERGE (b)-[:HELD_AT]->(e)
+          RETURN 1 AS _
+          UNION
+          WITH b
+          WITH b WHERE $event_id IS NULL
+          RETURN 1 AS _
+        }
         RETURN b
         `,
-        { id, name, match_type, status }
+        { id, name, match_type, status, event_id }
       );
     });
     
-    revalidatePath('/admin/neo4j/battles');
+    revalidatePath('/admin/battles');
     return { success: true };
   } catch (error: unknown) {
     console.error('Update error:', error);
     const message = error instanceof Error ? error.message : 'Failed to update Battle';
+    return { success: false, error: message };
+  } finally {
+    await session.close();
+  }
+}
+
+export async function createBattle(name: string, match_type: string, status: string, event_id: string | null = null, match_format: string = '1v1') {
+  const driver = getNeo4jDriver();
+  const session = driver.session();
+  
+  try {
+    const id = crypto.randomUUID();
+    await session.executeWrite(async (tx) => {
+      await tx.run(
+        `
+        CREATE (b:Battle {id: $id, name: $name, match_type: $match_type, status: $status, match_format: $match_format})
+        WITH b
+        CALL {
+          WITH b
+          WITH b WHERE $event_id IS NOT NULL
+          MATCH (e:Event {id: $event_id})
+          MERGE (b)-[:HELD_AT]->(e)
+          RETURN 1 AS _
+          UNION
+          WITH b
+          WITH b WHERE $event_id IS NULL
+          RETURN 1 AS _
+        }
+        RETURN b
+        `,
+        { id, name, match_type, status, match_format, event_id }
+      );
+    });
+    
+    revalidatePath('/admin/battles');
+    return { success: true, id };
+  } catch (error: unknown) {
+    console.error('Create error:', error);
+    const message = error instanceof Error ? error.message : 'Failed to create Battle';
     return { success: false, error: message };
   } finally {
     await session.close();
@@ -241,7 +322,7 @@ export async function syncBattleRelationships() {
         return count;
       });
 
-      revalidatePath('/admin/neo4j/participants');
+      revalidatePath('/admin/participants');
       return { success: true, count: result };
     } finally {
       await session.close();
@@ -286,11 +367,49 @@ export async function updateRelationshipOutcome(e1_id: string, e2_id: string, ba
       }
     });
     
-    revalidatePath('/admin/neo4j/participants');
+    revalidatePath('/admin/participants');
     return { success: true };
   } catch (error: unknown) {
     console.error('Update error:', error);
     const message = error instanceof Error ? error.message : 'Failed to update relationship';
+    return { success: false, error: message };
+  } finally {
+    await session.close();
+  }
+}
+
+export async function createRelationship(e1_id: string, e2_id: string, battle_id: string, outcome: 'e1_won' | 'e2_won' | 'draw') {
+  const driver = getNeo4jDriver();
+  const session = driver.session();
+  
+  try {
+    await session.executeWrite(async (tx) => {
+      if (outcome === 'e1_won') {
+        await tx.run(`
+          MATCH (winner:Emcee {id: $e1_id})
+          MATCH (loser:Emcee {id: $e2_id})
+          MERGE (winner)-[:DEFEATED {battle_id: $battle_id}]->(loser)
+        `, { e1_id, e2_id, battle_id });
+      } else if (outcome === 'e2_won') {
+        await tx.run(`
+          MATCH (winner:Emcee {id: $e2_id})
+          MATCH (loser:Emcee {id: $e1_id})
+          MERGE (winner)-[:DEFEATED {battle_id: $battle_id}]->(loser)
+        `, { e1_id, e2_id, battle_id });
+      } else {
+        await tx.run(`
+          MATCH (e1:Emcee {id: $e1_id})
+          MATCH (e2:Emcee {id: $e2_id})
+          MERGE (e1)-[:BATTLED {battle_id: $battle_id}]-(e2)
+        `, { e1_id, e2_id, battle_id });
+      }
+    });
+    
+    revalidatePath('/admin/participants');
+    return { success: true };
+  } catch (error: unknown) {
+    console.error('Create error:', error);
+    const message = error instanceof Error ? error.message : 'Failed to create relationship';
     return { success: false, error: message };
   } finally {
     await session.close();
@@ -352,7 +471,7 @@ export async function updateEvent(id: string, name: string, year: number | strin
       );
     });
     
-    revalidatePath('/admin/neo4j/events');
+    revalidatePath('/admin/events');
     return { success: true };
   } catch (error: unknown) {
     console.error('Update error:', error);
@@ -363,6 +482,33 @@ export async function updateEvent(id: string, name: string, year: number | strin
   }
 }
 
+export async function createEvent(name: string, year: number | string) {
+  const parsedYear = typeof year === 'string' ? parseInt(year, 10) : year;
+  const driver = getNeo4jDriver();
+  const session = driver.session();
+  
+  try {
+    const id = crypto.randomUUID();
+    await session.executeWrite(async (tx) => {
+      await tx.run(
+        `
+        CREATE (e:Event {id: $id, name: $name, year: $year})
+        RETURN e
+        `,
+        { id, name, year: parsedYear }
+      );
+    });
+    
+    revalidatePath('/admin/events');
+    return { success: true, id };
+  } catch (error: unknown) {
+    console.error('Create error:', error);
+    const message = error instanceof Error ? error.message : 'Failed to create Event';
+    return { success: false, error: message };
+  } finally {
+    await session.close();
+  }
+}
 export async function fetchGraphDataForVisualization() {
   const driver = getNeo4jDriver();
   const session = driver.session();

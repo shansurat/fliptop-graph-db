@@ -28,12 +28,11 @@ const FORMAT_LABELS: Record<string, string> = {
   handicap: 'Handicap',
 };
 
-export default function GraphClient({ graphData }: { graphData: GraphData }) {
+export default function GraphClient({ graphData, mode }: { graphData: GraphData, mode: 'Standard' | 'Hierarchy' }) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const fgRef = useRef<any>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const [selectedYear, setSelectedYear] = useState<string>('All');
-  const [graphMode, setGraphMode] = useState<'Standard' | 'Hierarchy'>('Standard');
   const [selectedMatchType, setSelectedMatchType] = useState<string>('All');
   const [selectedFormat, setSelectedFormat] = useState<string>('All');
   const containerRef = useRef<HTMLDivElement>(null);
@@ -43,7 +42,7 @@ export default function GraphClient({ graphData }: { graphData: GraphData }) {
   // Reset selection on filter changes
   useEffect(() => {
     setSelectedNodeId(null);
-  }, [selectedYear, graphMode, selectedMatchType, selectedFormat]);
+  }, [selectedYear, mode, selectedMatchType, selectedFormat]);
 
   const availableYears = useMemo(() => {
     const years = new Set<number>();
@@ -73,7 +72,7 @@ export default function GraphClient({ graphData }: { graphData: GraphData }) {
     let links = graphData.links;
     let nodes = graphData.nodes;
 
-    if (graphMode === 'Hierarchy') {
+    if (mode === 'Hierarchy') {
       links = links.filter(link =>
         link.type === 'DEFEATED' &&
         link.match_format === '1v1' &&
@@ -106,7 +105,7 @@ export default function GraphClient({ graphData }: { graphData: GraphData }) {
     );
 
     return { nodes, links };
-  }, [graphData, selectedYear, graphMode, selectedMatchType, selectedFormat]);
+  }, [graphData, selectedYear, mode, selectedMatchType, selectedFormat]);
 
   const nodeStats = useMemo(() => {
     const stats: Record<string, { wins: number; losses: number; draws: number; total: number; winRate: number }> = {};
@@ -199,23 +198,11 @@ export default function GraphClient({ graphData }: { graphData: GraphData }) {
 
       return () => window.removeEventListener('resize', updateDimensions);
     }
-  }, [displayData, graphMode]);
+  }, [displayData, mode]);
 
   return (
     <div ref={containerRef} className="w-full h-full relative group">
       <div className="absolute top-4 right-4 z-10 flex flex-col gap-2 opacity-80 group-hover:opacity-100 transition-opacity">
-        <div className="bg-[#1a1a1a] border border-[#333] rounded px-3 py-2 flex items-center justify-between gap-2">
-          <label htmlFor="mode-select" className="text-sm text-[#A3A3A3]">Mode:</label>
-          <select
-            id="mode-select"
-            value={graphMode}
-            onChange={(e) => setGraphMode(e.target.value as 'Standard' | 'Hierarchy')}
-            className="bg-[#2a2a2a] text-white border border-[#444] rounded px-2 py-1 text-sm outline-none focus:border-[#5E87C9] w-32"
-          >
-            <option value="Standard">Standard</option>
-            <option value="Hierarchy">Hierarchy</option>
-          </select>
-        </div>
 
         <div className="bg-[#1a1a1a] border border-[#333] rounded px-3 py-2 flex items-center justify-between gap-2">
           <label htmlFor="year-select" className="text-sm text-[#A3A3A3]">Year:</label>
@@ -279,7 +266,7 @@ export default function GraphClient({ graphData }: { graphData: GraphData }) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           nodeVal={(node: any) => {
             let baseVal = node.val || 1;
-            if (graphMode === 'Hierarchy') {
+            if (mode === 'Hierarchy') {
               // Exaggerate differences: make 1-battle nodes tiny, but heavily scale up veterans
               baseVal = Math.pow(baseVal, 1.8) * 0.02;
               // Ensure a minimum visibility size
@@ -314,18 +301,21 @@ export default function GraphClient({ graphData }: { graphData: GraphData }) {
             }
             if (link.type === 'ATTENDED') return '#ffb84d';
             if (link.match_type === 'tournament') return '#FFD700';
-            if (link.type === 'DEFEATED') return '#ff4d4d';
+            if (link.match_type === 'promo') return '#ec4899';
+            if (link.match_type === 'tryout') return '#06b6d4';
+            if (link.type === 'DEFEATED') return '#718096';
             return '#888888';
           }}
           linkOpacity={0.6}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           linkWidth={(link: any) => {
-            let baseWidth = 0.5;
-            if (link.type === 'DEFEATED') {
-              // Team battles get thicker links
+            let baseWidth = 1; // Default to 1 for better visibility
+            if (link.type === 'DEFEATED' || link.type === 'BATTLED') {
               if (['2v2', '3v3', '5v5'].includes(link.match_format)) baseWidth = 2;
-              else baseWidth = 1;
+            } else if (link.type === 'ATTENDED') {
+              baseWidth = 0.5;
             }
+            
             if (selectedNodeId) {
               if (highlightLinks.has(link)) return baseWidth * 4;
               return 0.1; // Very thin for dimmed links
@@ -409,7 +399,7 @@ export default function GraphClient({ graphData }: { graphData: GraphData }) {
           }}
           onBackgroundClick={() => setSelectedNodeId(null)}
           onEngineStop={() => {
-            if (graphMode === 'Hierarchy' && fgRef.current) {
+            if (mode === 'Hierarchy' && fgRef.current) {
               fgRef.current.zoomToFit(400);
             }
           }}

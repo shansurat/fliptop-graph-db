@@ -1,5 +1,5 @@
 import { getNeo4jDriver } from '@/lib/neo4j';
-import { syncBattlesFromSupabase, updateBattle } from '../actions';
+import { syncBattlesFromSupabase, updateBattle, createBattle } from '../actions';
 import BattlesClientPage from './BattlesClientPage';
 
 export const dynamic = 'force-dynamic';
@@ -8,11 +8,27 @@ export const revalidate = 0;
 export default async function BattlesAdminPage() {
   const driver = getNeo4jDriver();
   const session = driver.session();
-  let battles = [];
+  let battles: any[] = [];
+  let events: { id: string; name: string }[] = [];
 
   try {
-    const result = await session.run('MATCH (b:Battle) RETURN b ORDER BY b.name ASC');
-    battles = result.records.map((record) => record.get('b').properties);
+    const result = await session.run(`
+      MATCH (b:Battle)
+      OPTIONAL MATCH (b)-[:HELD_AT]->(e:Event)
+      RETURN b, e.id AS event_id
+      ORDER BY b.name ASC
+    `);
+    battles = result.records.map((record) => {
+      const bProps = record.get('b').properties;
+      return { ...bProps, event_id: record.get('event_id') };
+    });
+
+    const eventsResult = await session.run(`
+      MATCH (e:Event)
+      RETURN e.id AS id, e.name AS name
+      ORDER BY e.year DESC
+    `);
+    events = eventsResult.records.map(r => ({ id: r.get('id'), name: r.get('name') }));
   } catch (error) {
     console.error('Error fetching from Neo4j:', error);
   } finally {
@@ -30,8 +46,10 @@ export default async function BattlesAdminPage() {
 
       <BattlesClientPage
         initialBattles={battles}
+        availableEvents={events}
         syncAction={syncBattlesFromSupabase}
         updateAction={updateBattle}
+        createAction={createBattle}
       />
     </div>
   );

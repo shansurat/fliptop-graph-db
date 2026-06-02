@@ -1,5 +1,5 @@
 import { getNeo4jDriver } from '@/lib/neo4j';
-import { syncEventsFromSupabase, updateEvent } from '../actions';
+import { syncEventsFromSupabase, updateEvent, createEvent } from '../actions';
 import EventsClientPage from './EventsClientPage';
 
 export const dynamic = 'force-dynamic';
@@ -49,6 +49,7 @@ export default async function EventsAdminPage() {
         initialEvents={events}
         syncAction={syncEventsFromSupabase}
         updateAction={updateEvent}
+        createAction={createEvent}
       />
     </div>
   );

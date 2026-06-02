@@ -7,11 +7,10 @@ export default function Neo4jLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
 
   const navItems = [
-    { name: 'Emcees', href: '/admin/neo4j' },
-    { name: 'Battles', href: '/admin/neo4j/battles' },
-    { name: 'Opponents', href: '/admin/neo4j/participants' },
-    { name: 'Events', href: '/admin/neo4j/events' },
-    { name: '3D Graph', href: '/admin/neo4j/visualization' },
+    { name: 'Emcees', href: '/admin' },
+    { name: 'Battles', href: '/admin/battles' },
+    { name: 'Opponents', href: '/admin/participants' },
+    { name: 'Events', href: '/admin/events' },
   ];
 
   return (
@@ -28,17 +27,33 @@ export default function Neo4jLayout({ children }: { children: React.ReactNode })
               <Link
                 key={item.name}
                 href={item.href}
-                className={`block px-3 py-2 rounded-md text-sm transition-colors ${
-                  isActive
+                className={`block px-3 py-2 rounded-md text-sm transition-colors ${isActive
                     ? 'bg-[#2F2F2F] text-white font-medium'
                     : 'text-[#A3A3A3] hover:bg-[#202020] hover:text-[#cfcfcf]'
-                }`}
+                  }`}
               >
                 {item.name}
               </Link>
             );
           })}
         </nav>
+        
+        <div className="p-4 border-t border-[#2f2f2f]">
+          <button
+            onClick={async () => {
+              const { createClient } = await import('@supabase/supabase-js');
+              const supabase = createClient(
+                process.env.NEXT_PUBLIC_SUPABASE_URL!,
+                process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+              );
+              await supabase.auth.signOut();
+              window.location.href = '/login';
+            }}
+            className="w-full text-left px-3 py-2 rounded-md text-sm text-red-400 hover:bg-red-950/30 hover:text-red-300 transition-colors"
+          >
+            Logout
+          </button>
+        </div>
       </div>
 
       {/* Main Content */}

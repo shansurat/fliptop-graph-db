@@ -1,5 +1,5 @@
-import { fetchGraphDataForVisualization } from './actions';
-import GraphClient from './ForceGraphWrapper';
+import { fetchGraphDataForVisualization } from '../actions';
+import GraphClient from '../ForceGraphWrapper';
 
 export const dynamicConfig = 'force-dynamic';
 export const revalidate = 0;
@@ -17,13 +17,13 @@ export default async function VisualizationAdminPage() {
       <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 flex gap-1 p-1 bg-[#1a1a1a] rounded-full border border-[#333] shadow-lg">
         <Link 
           href="/" 
-          className="px-6 py-2 rounded-full text-sm font-medium transition-colors bg-[#2a2a2a] text-white shadow-sm"
+          className="px-6 py-2 rounded-full text-sm font-medium transition-colors text-[#A3A3A3] hover:text-white hover:bg-[#222]"
         >
           Standard
         </Link>
         <Link 
           href="/hierarchy" 
-          className="px-6 py-2 rounded-full text-sm font-medium transition-colors text-[#A3A3A3] hover:text-white hover:bg-[#222]"
+          className="px-6 py-2 rounded-full text-sm font-medium transition-colors bg-[#2a2a2a] text-white shadow-sm"
         >
           Hierarchy
         </Link>
@@ -45,7 +45,7 @@ export default async function VisualizationAdminPage() {
       </div>
 
       <div className="w-full h-full">
-        <GraphClient graphData={graphData} mode="Standard" />
+        <GraphClient graphData={graphData} mode="Hierarchy" />
       </div>
     </div>
   );

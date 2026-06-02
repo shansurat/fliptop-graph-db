@@ -1,6 +1,6 @@
 import { getNeo4jDriver } from '@/lib/neo4j';
-import Neo4jClientPage from './Neo4jClientPage';
-import { syncFromSupabase, updateEmcee } from './actions';
+import EmceesClientPage from './EmceesClientPage';
+import { syncFromSupabase, updateEmcee, createEmcee } from './actions';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -28,10 +28,11 @@ export default async function Neo4jAdminPage() {
         </p>
       </div>
 
-      <Neo4jClientPage 
+      <EmceesClientPage 
         initialEmcees={emcees} 
         syncAction={syncFromSupabase} 
         updateAction={updateEmcee} 
+        createAction={createEmcee}
       />
     </div>
   );

@@ -1,6 +1,6 @@
 import { getNeo4jDriver } from '@/lib/neo4j';
 import ParticipantsClientPage from './ParticipantsClientPage';
-import { syncBattleRelationships, updateRelationshipOutcome } from '../actions';
+import { syncBattleRelationships, updateRelationshipOutcome, createRelationship } from '../actions';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -16,6 +16,8 @@ export default async function ParticipantsAdminPage() {
     battle_id: string;
     outcome: 'DEFEATED' | 'BATTLED';
   }[] = [];
+  let emcees: { id: string; stage_name: string }[] = [];
+  let battles: { id: string; name: string }[] = [];
 
   try {
     const result = await session.run(`
@@ -34,6 +36,12 @@ export default async function ParticipantsAdminPage() {
       outcome: record.get('outcome') as 'DEFEATED' | 'BATTLED'
     }));
 
+    const emceesResult = await session.run('MATCH (e:Emcee) RETURN e.id AS id, e.stage_name AS name ORDER BY e.stage_name ASC');
+    emcees = emceesResult.records.map(r => ({ id: r.get('id'), stage_name: r.get('name') }));
+
+    const battlesResult = await session.run('MATCH (b:Battle) RETURN b.id AS id, b.name AS name ORDER BY b.name ASC');
+    battles = battlesResult.records.map(r => ({ id: r.get('id'), name: r.get('name') }));
+
   } catch (error) {
     console.error('Error fetching from Neo4j:', error);
   } finally {
@@ -51,8 +59,11 @@ export default async function ParticipantsAdminPage() {
 
       <ParticipantsClientPage 
         initialRelationships={relationships} 
+        availableEmcees={emcees}
+        availableBattles={battles}
         syncAction={syncBattleRelationships} 
         updateAction={updateRelationshipOutcome} 
+        createAction={createRelationship}
       />
     </div>
   );
