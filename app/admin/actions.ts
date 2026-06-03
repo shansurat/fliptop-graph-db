@@ -44,7 +44,7 @@ export async function syncFromSupabase() {
     while (hasMore) {
       const { data, error } = await supabase
         .from('emcees')
-        .select('*, battle_participants(battles(view_count))')
+        .select('*, avatar:images!emcees_avatar_id_fkey(public_url), battle_participants(battles(view_count))')
         .range(page * pageSize, (page + 1) * pageSize - 1);
 
       if (error) throw error;
@@ -52,8 +52,9 @@ export async function syncFromSupabase() {
       if (data && data.length > 0) {
         const formattedData = data.map((emcee: any) => {
           const views = emcee.battle_participants?.reduce((sum: number, bp: any) => sum + (bp.battles?.view_count || 0), 0) || 0;
-          const { battle_participants, ...rest } = emcee;
-          return { ...rest, total_views: views };
+          const avatarUrl = emcee.avatar?.public_url || null;
+          const { battle_participants, avatar, ...rest } = emcee;
+          return { ...rest, total_views: views, avatar_url: avatarUrl };
         });
         allEmcees = [...allEmcees, ...formattedData];
       }

@@ -15,6 +15,7 @@ export async function fetchGraphDataForVisualization() {
              COALESCE(n.stage_name, n.event_name, 'Unknown') AS name, 
              n.hometown AS hometown,
              n.total_views AS total_views,
+             n.avatar_url AS avatar_url,
              battleCount
     `);
 
@@ -23,12 +24,12 @@ export async function fetchGraphDataForVisualization() {
       WHERE type(r) IN ['DEFEATED', 'BATTLED']
       MATCH (b:Battle {id: r.battle_id})
       OPTIONAL MATCH (b)-[:HELD_AT]->(ev:Event)
-      RETURN source.id AS source, target.id AS target, type(r) AS type, ev.year AS year, b.match_type AS match_type, b.match_format AS match_format
+      RETURN source.id AS source, target.id AS target, type(r) AS type, ev.year AS year, b.match_type AS match_type, b.match_format AS match_format, b.name AS battle_name, b.view_count AS view_count, ev.event_name AS event_name
       UNION
       MATCH (source:Emcee)-[r]-(:Emcee)
       WHERE type(r) IN ['DEFEATED', 'BATTLED']
       MATCH (b:Battle {id: r.battle_id})-[:HELD_AT]->(target:Event)
-      RETURN DISTINCT source.id AS source, target.id AS target, 'ATTENDED' AS type, target.year AS year, null AS match_type, null AS match_format
+      RETURN DISTINCT source.id AS source, target.id AS target, 'ATTENDED' AS type, target.year AS year, null AS match_type, null AS match_format, null AS battle_name, null AS view_count, null AS event_name
     `);
 
     const nodes = nodesRes.records.map(rec => {
@@ -49,7 +50,8 @@ export async function fetchGraphDataForVisualization() {
         group,
         name: rec.get('name'),
         hometown: rec.get('hometown') || null,
-        total_views: rec.get('total_views') ? rec.get('total_views').toNumber() : null,
+        total_views: rec.get('total_views') != null ? (rec.get('total_views').toNumber ? rec.get('total_views').toNumber() : Number(rec.get('total_views'))) : null,
+        avatar_url: rec.get('avatar_url') || null,
         val
       };
     });
@@ -63,7 +65,10 @@ export async function fetchGraphDataForVisualization() {
         type: rec.get('type'),
         year,
         match_type: rec.get('match_type') || null,
-        match_format: rec.get('match_format') || null
+        match_format: rec.get('match_format') || null,
+        battle_name: rec.get('battle_name') || null,
+        view_count: rec.get('view_count') != null ? (rec.get('view_count').toNumber ? rec.get('view_count').toNumber() : Number(rec.get('view_count'))) : null,
+        event_name: rec.get('event_name') || null
       };
     });
 
