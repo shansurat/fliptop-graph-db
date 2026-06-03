@@ -47,7 +47,7 @@ const slides: Slide[] = [
     description: 'By rendering nodes (Emcees, Events) and edges (Wins, Losses, Attendance) in a 3D simulation canvas:',
     bullets: [
       'Interactive Node Exploration: Click an Emcee to highlight their battle history, win/loss paths, and connected opponents.',
-      '3D Camera Controls: Pan, zoom, and rotate the graph to inspect complex battle networks from different angles.',
+      'Camera Controls: Pan, zoom, and rotate the graph to inspect complex battle networks from different angles.',
       'Path Highlights: Instantly analyze matchup outcomes with green edges for wins and red edges for losses.',
     ],
     imageUrl: '/assets/neo4j-3.png'
