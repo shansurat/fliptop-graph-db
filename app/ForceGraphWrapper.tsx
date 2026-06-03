@@ -162,7 +162,7 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
 
   const filteredEmceesList = useMemo(() => {
     let emcees = displayData.nodes.filter(n => n.group === 'Emcee');
-    
+
     emcees = [...emcees].sort((a, b) => {
       if (sortBy === 'name') {
         return a.name.localeCompare(b.name);
@@ -388,10 +388,10 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
                   metricLabel = `${(rate * 100).toFixed(0)}% WR`;
                   metricStyle = { color: getWinRateColor(rate) };
                 } else if (sortBy === 'views') {
-                  metricLabel = views >= 1000000 
-                    ? `${(views / 1000000).toFixed(1)}M v` 
-                    : views >= 1000 
-                      ? `${(views / 1000).toFixed(0)}K v` 
+                  metricLabel = views >= 1000000
+                    ? `${(views / 1000000).toFixed(1)}M v`
+                    : views >= 1000
+                      ? `${(views / 1000).toFixed(0)}K v`
                       : `${views} v`;
                   metricStyle = { color: '#A3A3A3' };
                 } else if (sortBy === 'wins') {
@@ -406,9 +406,8 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
                   <button
                     key={emcee.id}
                     onClick={() => handleSearchSelect(emcee)}
-                    className={`w-full text-left px-3 py-2 text-xs flex items-center gap-2 transition-colors ${
-                      isSelected ? 'bg-[#2F2F2F] text-[#EFEFEF]' : 'text-[#D0D0D0] hover:bg-[#252525] hover:text-[#EFEFEF]'
-                    }`}
+                    className={`w-full text-left px-3 py-2 text-xs flex items-center gap-2 transition-colors ${isSelected ? 'bg-[#2F2F2F] text-[#EFEFEF]' : 'text-[#D0D0D0] hover:bg-[#252525] hover:text-[#EFEFEF]'
+                      }`}
                   >
                     {hasAvatar ? (
                       <img
@@ -492,49 +491,40 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
           linkColor={(link: any) => {
             if (selectedNodeId || selectedLink) {
               if (highlightLinks.has(link)) return '#FFFFFF';
-              return '#222222'; // Dimmed
+              return '#1a1a1a'; // Dimmed
             }
-            if (link.type === 'ATTENDED') return '#ffb84d';
-            if (link.match_type === 'tournament') return '#FFD700';
-            if (link.match_type === 'promo') return '#ec4899';
-            if (link.match_type === 'tryout') return '#06b6d4';
-            if (link.type === 'DEFEATED') return '#718096';
-            return '#888888';
+            if (link.type === 'ATTENDED') return '#b45309'; // Darker gold/orange
+            if (link.match_type === 'tournament') return '#b59210'; // Darker metallic gold
+            if (link.match_type === 'promo') return '#be185d'; // Darker magenta
+            if (link.match_type === 'tryout') return '#0369a1'; // Darker blue
+            if (link.type === 'DEFEATED') return '#4a5568'; // Slate grey
+            return '#555555';
           }}
           linkOpacity={0.6}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           linkWidth={(link: any) => {
-            let baseWidth = 1; // Default to 1 for better visibility
+            let baseWidth = .6; // Slightly thicker default link width
             if (link.type === 'DEFEATED' || link.type === 'BATTLED') {
-              if (['2v2', '3v3', '5v5'].includes(link.match_format)) baseWidth = 2;
+              if (['2v2', '3v3', '5v5'].includes(link.match_format)) baseWidth = 1.4;
             } else if (link.type === 'ATTENDED') {
-              baseWidth = 0.5;
+              baseWidth = 0.3;
             }
 
             if (selectedNodeId || selectedLink) {
-              if (highlightLinks.has(link)) return baseWidth * 4;
-              return 0.1; // Very thin for dimmed links
+              if (highlightLinks.has(link)) return baseWidth * 3.5;
+              return 0.05; // Very thin for dimmed links
             }
             return baseWidth;
           }}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           linkDirectionalArrowLength={(link: any) => link.type === 'DEFEATED' ? 4 : link.type === 'ATTENDED' ? 3 : 0}
           linkDirectionalArrowRelPos={1}
-          // Directional particles — visually encode match format
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           linkDirectionalParticles={(link: any) => {
-            if (selectedNodeId || selectedLink) {
-              if (highlightLinks.has(link)) return 4;
-              return 0; // No particles on unhighlighted links
+            if ((selectedNodeId || selectedLink) && highlightLinks.has(link)) {
+              return 4;
             }
-            if (link.type === 'ATTENDED') return 0;
-            const fmt = link.match_format;
-            if (fmt === 'royal_rumble') return 6;
-            if (fmt === '5v5') return 5;
-            if (fmt === '3v3' || fmt === '3way') return 3;
-            if (fmt === '2v2') return 2;
-            if (fmt === 'handicap') return 4;
-            return 1; // 1v1 default
+            return 0;
           }}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           linkDirectionalParticleSpeed={(link: any) => {
@@ -548,12 +538,12 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           linkDirectionalParticleWidth={(link: any) => {
             if ((selectedNodeId || selectedLink) && highlightLinks.has(link)) {
-              return 5; // Extra large particles for highlighted links
+              return 4; // Extra large particles for highlighted links
             }
-            if (link.match_type === 'tournament') return 3;
-            if (['2v2', '3v3', '5v5'].includes(link.match_format)) return 2.5;
-            if (link.match_format === 'royal_rumble') return 2;
-            return 1.5;
+            if (link.match_type === 'tournament') return 1.8;
+            if (['2v2', '3v3', '5v5'].includes(link.match_format)) return 1.5;
+            if (link.match_format === 'royal_rumble') return 1.2;
+            return 1.0;
           }}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           linkDirectionalParticleColor={(link: any) => {
@@ -761,7 +751,7 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
         const targetId = typeof selectedLink.target === 'object' ? selectedLink.target.id : selectedLink.target;
         const sourceName = graphData.nodes.find(n => n.id === sourceId)?.name || sourceId;
         const targetName = graphData.nodes.find(n => n.id === targetId)?.name || targetId;
-        
+
         const sourceNode = graphData.nodes.find(n => n.id === sourceId);
         const targetNode = graphData.nodes.find(n => n.id === targetId);
 
@@ -771,7 +761,7 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
             <div className="relative w-full bg-[#202020] aspect-[16/10] overflow-hidden flex items-center justify-center border-b border-[#2F2F2F] shrink-0">
               {/* Background Graphic or Gradient */}
               <div className="absolute inset-0 bg-gradient-to-br from-[#1E293B] via-[#0F172A] to-[#1E293B] opacity-50" />
-              
+
               {/* Matchup Avatars */}
               <div className="relative z-10 flex items-center gap-6 mb-8 mt-2">
                 {/* Source Emcee */}
@@ -856,13 +846,11 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
                     <p className="text-[10px] text-[#A3A3A3] uppercase tracking-wider">Year</p>
                     <p className="text-sm font-mono text-[#EFEFEF] mt-1">{selectedLink.year || 'N/A'}</p>
                   </div>
-                  <div className={`bg-[#1A1A1A] p-3 rounded-md flex flex-col justify-between border ${
-                    selectedLink.type === 'DEFEATED' ? 'border-[#22c55e]/20' : 'border-[#2F2F2F]'
-                  }`}>
+                  <div className={`bg-[#1A1A1A] p-3 rounded-md flex flex-col justify-between border ${selectedLink.type === 'DEFEATED' ? 'border-[#22c55e]/20' : 'border-[#2F2F2F]'
+                    }`}>
                     <p className="text-[10px] text-[#A3A3A3] uppercase tracking-wider">Outcome</p>
-                    <p className={`text-sm font-mono mt-1 truncate ${
-                      selectedLink.type === 'DEFEATED' ? 'text-[#4ade80]' : 'text-[#EFEFEF]'
-                    }`} title={selectedLink.type === 'DEFEATED' ? `${sourceName} won` : 'Draw'}>
+                    <p className={`text-sm font-mono mt-1 truncate ${selectedLink.type === 'DEFEATED' ? 'text-[#4ade80]' : 'text-[#EFEFEF]'
+                      }`} title={selectedLink.type === 'DEFEATED' ? `${sourceName} won` : 'Draw'}>
                       {selectedLink.type === 'DEFEATED' ? `${sourceName} won` : 'Draw'}
                     </p>
                   </div>
@@ -874,93 +862,89 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
       })()}
 
       {/* Legend */}
-      <div className="absolute bottom-6 left-6 z-20 bg-[#121212]/95 backdrop-blur-xl border border-[#2F2F2F] rounded-md p-4 shadow-2xl transition-all duration-300 w-64 select-none pointer-events-auto">
-        <div className="flex justify-between items-center mb-3">
-          <h3 className="text-xs text-[#A3A3A3] uppercase tracking-widest font-semibold">Legend</h3>
-        </div>
-
+      <div className="absolute bottom-6 left-6 z-20 w-64 select-none pointer-events-auto transition-all duration-300 opacity-60 hover:opacity-100">
         {/* Toggle Node Size Basis */}
-        <div className="mb-4 pb-3 border-b border-[#2F2F2F] flex flex-col gap-1.5">
-          <p className="text-[10px] text-[#888] uppercase tracking-wider font-semibold">Node Size Basis</p>
-          <div className="flex gap-0.5 p-1 bg-[#191919] rounded-md border border-[#2F2F2F] w-full">
+        <div className="mb-4 flex flex-col gap-2">
+          <p className="text-[9px] text-[#555] uppercase tracking-widest font-bold">Node Size Basis</p>
+          <div className="flex gap-4 border-b border-[#222] pb-1.5 w-full">
             <button
               onClick={() => setSizeBasis('battles')}
-              className={`flex-1 py-1 rounded-sm text-[10px] font-medium transition-colors ${
+              className={`text-[10px] font-bold tracking-wider transition-all -mb-[7px] pb-1 cursor-pointer ${
                 sizeBasis === 'battles' 
-                  ? 'bg-[#2F2F2F] text-[#EFEFEF]' 
-                  : 'text-[#A3A3A3] hover:text-[#EFEFEF] hover:bg-[#202020]'
+                  ? 'text-[#EFEFEF] border-b border-[#EFEFEF]' 
+                  : 'text-[#555] hover:text-[#A3A3A3]'
               }`}
             >
-              Battles
+              BATTLES
             </button>
             <button
               onClick={() => setSizeBasis('views')}
-              className={`flex-1 py-1 rounded-sm text-[10px] font-medium transition-colors ${
+              className={`text-[10px] font-bold tracking-wider transition-all -mb-[7px] pb-1 cursor-pointer ${
                 sizeBasis === 'views' 
-                  ? 'bg-[#2F2F2F] text-[#EFEFEF]' 
-                  : 'text-[#A3A3A3] hover:text-[#EFEFEF] hover:bg-[#202020]'
+                  ? 'text-[#EFEFEF] border-b border-[#EFEFEF]' 
+                  : 'text-[#555] hover:text-[#A3A3A3]'
               }`}
             >
-              Views
+              VIEWS
             </button>
           </div>
         </div>
 
         {mode === 'Hierarchy' ? (
-          <div className="flex gap-8">
-            <div className="space-y-2">
-              <p className="text-[10px] text-[#888] mb-1.5 uppercase tracking-wider font-semibold">Nodes</p>
+          <div className="flex gap-6 mt-4">
+            <div className="space-y-1.5">
+              <p className="text-[9px] text-[#555] uppercase tracking-widest font-bold">Nodes</p>
               <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded bg-[#4ade80]"></div>
-                <span className="text-[11px] text-[#EFEFEF]">Emcee Win Rate</span>
+                <div className="w-2 h-2 rounded-full bg-[#4ade80]"></div>
+                <span className="text-[10px] text-[#A3A3A3] font-medium">Emcee Win Rate</span>
               </div>
             </div>
-            <div className="space-y-2">
-              <p className="text-[10px] text-[#888] mb-1.5 uppercase tracking-wider font-semibold">Edges</p>
+            <div className="space-y-1.5">
+              <p className="text-[9px] text-[#555] uppercase tracking-widest font-bold">Edges</p>
               <div className="flex items-center gap-2">
-                <div className="w-3.5 h-0.5 bg-[#FFD700]"></div>
-                <span className="text-[11px] text-[#EFEFEF]">Tournament</span>
+                <div className="w-3 h-0.5 bg-[#FFD700]"></div>
+                <span className="text-[10px] text-[#A3A3A3] font-medium">Tournament</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-3.5 h-0.5 bg-[#718096]"></div>
-                <span className="text-[11px] text-[#EFEFEF]">Non-Tournament</span>
+                <div className="w-3 h-0.5 bg-[#718096]"></div>
+                <span className="text-[10px] text-[#A3A3A3] font-medium">Non-Tournament</span>
               </div>
             </div>
           </div>
         ) : (
-          <div className="flex gap-8">
-            <div className="space-y-2 flex-1">
-              <p className="text-[10px] text-[#888] mb-1.5 uppercase tracking-wider font-semibold">Nodes</p>
+          <div className="flex gap-6 mt-4">
+            <div className="space-y-1.5 flex-1">
+              <p className="text-[9px] text-[#555] uppercase tracking-widest font-bold">Nodes</p>
               <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded bg-[#4ade80]"></div>
-                <span className="text-[11px] text-[#EFEFEF]">Emcee Win Rate</span>
+                <div className="w-2 h-2 rounded-full bg-[#4ade80]"></div>
+                <span className="text-[10px] text-[#A3A3A3] font-medium">Emcee Win Rate</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded bg-[#ffb84d]"></div>
-                <span className="text-[11px] text-[#EFEFEF]">Event</span>
+                <div className="w-2 h-2 rounded-full bg-[#ffb84d]"></div>
+                <span className="text-[10px] text-[#A3A3A3] font-medium">Event</span>
               </div>
             </div>
-            <div className="space-y-2 flex-1">
-              <p className="text-[10px] text-[#888] mb-1.5 uppercase tracking-wider font-semibold">Edges</p>
+            <div className="space-y-1.5 flex-1">
+              <p className="text-[9px] text-[#555] uppercase tracking-widest font-bold">Edges</p>
               <div className="flex items-center gap-2">
                 <div className="w-3.5 h-0.5 bg-[#FFD700]"></div>
-                <span className="text-[11px] text-[#EFEFEF]">Tournament</span>
+                <span className="text-[10px] text-[#A3A3A3] font-medium">Tournament</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3.5 h-0.5 bg-[#ec4899]"></div>
-                <span className="text-[11px] text-[#EFEFEF]">Promo</span>
+                <span className="text-[10px] text-[#A3A3A3] font-medium">Promo</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3.5 h-0.5 bg-[#06b6d4]"></div>
-                <span className="text-[11px] text-[#EFEFEF]">Tryout</span>
+                <span className="text-[10px] text-[#A3A3A3] font-medium">Tryout</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3.5 h-0.5 bg-[#718096]"></div>
-                <span className="text-[11px] text-[#EFEFEF]">Defeated / Battled</span>
+                <span className="text-[10px] text-[#A3A3A3] font-medium">Defeated / Battled</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3.5 h-0.5 bg-[#ffb84d]"></div>
-                <span className="text-[11px] text-[#EFEFEF]">Attended Event</span>
+                <span className="text-[10px] text-[#A3A3A3] font-medium">Attended Event</span>
               </div>
             </div>
           </div>
