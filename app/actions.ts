@@ -1,8 +1,21 @@
 'use server'
 
 import { getNeo4jDriver } from '@/lib/neo4j';
+import { supabase } from '@/lib/supabase';
+import { redis } from '@/lib/redis';
 
 export async function fetchGraphDataForVisualization() {
+  if (redis) {
+    try {
+      const cached = await redis.get<{ nodes: any[], links: any[] }>('fliptop:graph_data');
+      if (cached) {
+        return { success: true, data: cached };
+      }
+    } catch (e) {
+      console.warn('Redis cache read failed:', e);
+    }
+  }
+
   const driver = getNeo4jDriver();
   const session = driver.session();
   try {
@@ -72,7 +85,17 @@ export async function fetchGraphDataForVisualization() {
       };
     });
 
-    return { success: true, data: { nodes, links } };
+    const payload = { nodes, links };
+    
+    if (redis) {
+      try {
+        await redis.set('fliptop:graph_data', payload);
+      } catch (e) {
+        console.warn('Redis cache write failed:', e);
+      }
+    }
+
+    return { success: true, data: payload };
   } catch (error) {
     console.error('Visualization error:', error);
     const message = error instanceof Error ? error.message : 'Unknown error fetching graph data';

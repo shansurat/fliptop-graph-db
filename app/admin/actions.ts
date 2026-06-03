@@ -3,6 +3,17 @@
 import { getNeo4jDriver } from '@/lib/neo4j';
 import { supabase } from '@/lib/supabase';
 import { revalidatePath } from 'next/cache';
+import { redis } from '@/lib/redis';
+
+async function invalidateCache() {
+  if (redis) {
+    try {
+      await redis.del('fliptop:graph_data');
+    } catch (e) {
+      console.warn('Redis cache invalidation failed:', e);
+    }
+  }
+}
 
 async function fetchAllSupabaseRecords(tableName: string) {
   let allRecords: Record<string, unknown>[] = [];
@@ -87,6 +98,7 @@ export async function syncFromSupabase() {
         return res.records[0].get('syncedCount').toNumber();
       });
 
+      await invalidateCache();
       revalidatePath('/admin/neo4j');
       return { success: true, count: result };
     } finally {
@@ -117,6 +129,7 @@ export async function updateEmcee(id: string, stage_name: string, hometown: stri
       );
     });
     
+    await invalidateCache();
     revalidatePath('/admin');
     return { success: true };
   } catch (error: unknown) {
@@ -144,6 +157,7 @@ export async function createEmcee(stage_name: string, hometown: string) {
       );
     });
     
+    await invalidateCache();
     revalidatePath('/admin');
     return { success: true, id };
   } catch (error: unknown) {
@@ -182,6 +196,7 @@ export async function syncBattlesFromSupabase() {
         return res.records[0].get('syncedCount').toNumber();
       });
 
+      await invalidateCache();
       revalidatePath('/admin/neo4j/battles');
       return { success: true, count: result };
     } finally {
@@ -227,6 +242,7 @@ export async function updateBattle(id: string, name: string, match_type: string,
       );
     });
     
+    await invalidateCache();
     revalidatePath('/admin/battles');
     return { success: true };
   } catch (error: unknown) {
@@ -266,6 +282,7 @@ export async function createBattle(name: string, match_type: string, match_forma
       );
     });
     
+    await invalidateCache();
     revalidatePath('/admin/battles');
     return { success: true, id };
   } catch (error: unknown) {
@@ -352,6 +369,7 @@ export async function syncBattleRelationships() {
         return count;
       });
 
+      await invalidateCache();
       revalidatePath('/admin/participants');
       return { success: true, count: result };
     } finally {
@@ -397,6 +415,7 @@ export async function updateRelationshipOutcome(e1_id: string, e2_id: string, ba
       }
     });
     
+    await invalidateCache();
     revalidatePath('/admin/participants');
     return { success: true };
   } catch (error: unknown) {
@@ -435,6 +454,7 @@ export async function createRelationship(e1_id: string, e2_id: string, battle_id
       }
     });
     
+    await invalidateCache();
     revalidatePath('/admin/participants');
     return { success: true };
   } catch (error: unknown) {
@@ -469,6 +489,7 @@ export async function syncEventsFromSupabase() {
         return res.records[0].get('syncedCount').toNumber();
       });
 
+      await invalidateCache();
       revalidatePath('/admin/neo4j/events');
       return { success: true, count: result };
     } finally {
@@ -501,6 +522,7 @@ export async function updateEvent(id: string, name: string, year: number | strin
       );
     });
     
+    await invalidateCache();
     revalidatePath('/admin/events');
     return { success: true };
   } catch (error: unknown) {
@@ -529,6 +551,7 @@ export async function createEvent(name: string, year: number | string) {
       );
     });
     
+    await invalidateCache();
     revalidatePath('/admin/events');
     return { success: true, id };
   } catch (error: unknown) {
@@ -618,6 +641,7 @@ export async function deleteEmcee(id: string) {
     await session.executeWrite(async (tx) => {
       await tx.run(`MATCH (e:Emcee {id: $id}) DETACH DELETE e`, { id });
     });
+    await invalidateCache();
     revalidatePath('/admin');
     return { success: true };
   } catch (error: unknown) {
@@ -637,6 +661,7 @@ export async function deleteBattle(id: string) {
     await session.executeWrite(async (tx) => {
       await tx.run(`MATCH (b:Battle {id: $id}) DETACH DELETE b`, { id });
     });
+    await invalidateCache();
     revalidatePath('/admin/battles');
     return { success: true };
   } catch (error: unknown) {
@@ -656,6 +681,7 @@ export async function deleteEvent(id: string) {
     await session.executeWrite(async (tx) => {
       await tx.run(`MATCH (e:Event {id: $id}) DETACH DELETE e`, { id });
     });
+    await invalidateCache();
     revalidatePath('/admin/events');
     return { success: true };
   } catch (error: unknown) {
@@ -677,6 +703,8 @@ export async function deleteRelationship(e1_id: string, e2_id: string, battle_id
         DELETE r
       `, { e1_id, e2_id, battle_id });
     });
+    await invalidateCache();
+    revalidatePath('/admin/participants');
     revalidatePath('/admin/participants');
     return { success: true };
   } catch (error: unknown) {
