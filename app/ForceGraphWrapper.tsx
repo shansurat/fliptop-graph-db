@@ -305,7 +305,7 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
             id="year-select"
             value={selectedYear}
             onChange={(e) => setSelectedYear(e.target.value)}
-            className="bg-[#202020] text-[#EFEFEF] border border-[#373737] rounded-sm px-3 py-2 text-sm outline-none focus:border-[#5E87C9] w-32"
+            className="bg-[#121212]/30 backdrop-blur-md text-[#A3A3A3] hover:text-[#EFEFEF] border border-white/5 rounded-md px-3 py-2 text-xs outline-none focus:border-white/20 transition-all w-32 cursor-pointer"
           >
             <option value="All">All Years</option>
             {availableYears.map(y => (
@@ -317,7 +317,7 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
             id="type-select"
             value={selectedMatchType}
             onChange={(e) => setSelectedMatchType(e.target.value)}
-            className="bg-[#202020] text-[#EFEFEF] border border-[#373737] rounded-sm px-3 py-2 text-sm outline-none focus:border-[#5E87C9] w-32"
+            className="bg-[#121212]/30 backdrop-blur-md text-[#A3A3A3] hover:text-[#EFEFEF] border border-white/5 rounded-md px-3 py-2 text-xs outline-none focus:border-white/20 transition-all w-32 cursor-pointer"
           >
             <option value="All">All Types</option>
             {availableMatchTypes.map(t => (
@@ -332,18 +332,18 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
             placeholder="Search Emcee..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#191919] text-[#EFEFEF] border border-[#2F2F2F] rounded-md px-3 py-2 text-sm outline-none focus:border-[#5E87C9] placeholder-[#555] shadow-sm"
+            className="w-full bg-[#121212]/30 backdrop-blur-md text-[#A3A3A3] focus:text-[#EFEFEF] border border-white/5 rounded-md px-3 py-2 text-xs outline-none focus:border-white/20 focus:bg-white/[0.04] placeholder-[#555] transition-all"
           />
         </div>
 
         {mode !== 'Hierarchy' && (
-          <div className="bg-[#191919] border border-[#2F2F2F] shadow-sm rounded-md px-3 py-2 flex items-center justify-between gap-2">
-            <label htmlFor="format-select" className="text-sm text-[#A3A3A3]">Format</label>
+          <div className="bg-[#121212]/20 backdrop-blur-md border border-white/5 rounded-md px-3 py-1.5 flex items-center justify-between gap-2">
+            <label htmlFor="format-select" className="text-xs text-[#A3A3A3]">Format</label>
             <select
               id="format-select"
               value={selectedFormat}
               onChange={(e) => setSelectedFormat(e.target.value)}
-              className="bg-[#202020] text-[#EFEFEF] border border-[#373737] rounded-md px-2 py-1 text-sm outline-none focus:border-[#5E87C9] w-32"
+              className="bg-transparent text-[#A3A3A3] hover:text-[#EFEFEF] border border-white/5 rounded-md px-2 py-1 text-xs outline-none focus:border-white/20 w-32 cursor-pointer transition-colors"
             >
               <option value="All">All Formats</option>
               {availableFormats.map(f => (
@@ -354,13 +354,13 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
         )}
 
         {/* Scrollable Emcees List */}
-        <div className="bg-[#191919] border border-[#2F2F2F] shadow-sm rounded-md flex flex-col overflow-hidden max-h-[300px]">
-          <div className="px-3 py-1.5 border-b border-[#2F2F2F] flex justify-between items-center bg-[#151515] shrink-0">
+        <div className="bg-[#121212]/20 backdrop-blur-md border border-white/5 rounded-md flex flex-col overflow-hidden max-h-[300px]">
+          <div className="px-3 py-1.5 border-b border-white/5 flex justify-between items-center bg-transparent shrink-0">
             <span className="text-xs text-[#A3A3A3] uppercase tracking-wider font-semibold">Emcees ({filteredEmceesList.length})</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="bg-[#202020] text-[#A3A3A3] border border-[#2F2F2F] rounded-md px-2 py-0.5 text-[10px] outline-none focus:border-[#5E87C9] w-24 hover:text-[#EFEFEF] transition-colors cursor-pointer"
+              className="bg-transparent text-[#A3A3A3] border border-white/5 rounded-md px-2 py-0.5 text-[10px] outline-none focus:border-white/20 w-24 hover:text-[#EFEFEF] transition-colors cursor-pointer"
             >
               <option value="name">Sort: Name</option>
               <option value="winRate">Sort: Win Rate</option>
@@ -369,7 +369,7 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
               <option value="losses">Sort: Losses</option>
             </select>
           </div>
-          <div className="overflow-y-auto flex-1 divide-y divide-[#232323] scrollbar-thin">
+          <div className="overflow-y-auto flex-1 divide-y divide-white/[0.03] scrollbar-thin">
             {filteredEmceesList.length === 0 ? (
               <div className="p-3 text-xs text-[#555] text-center">No emcees found</div>
             ) : (
@@ -406,17 +406,17 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
                   <button
                     key={emcee.id}
                     onClick={() => handleSearchSelect(emcee)}
-                    className={`w-full text-left px-3 py-2 text-xs flex items-center gap-2 transition-colors ${isSelected ? 'bg-[#2F2F2F] text-[#EFEFEF]' : 'text-[#D0D0D0] hover:bg-[#252525] hover:text-[#EFEFEF]'
+                    className={`w-full text-left px-3 py-2 text-xs flex items-center gap-2 transition-colors ${isSelected ? 'bg-white/[0.07] text-[#EFEFEF]' : 'text-[#A3A3A3] hover:bg-white/[0.03] hover:text-[#EFEFEF]'
                       }`}
                   >
                     {hasAvatar ? (
                       <img
                         src={emcee.avatar_url!}
                         alt={emcee.name}
-                        className="w-5 h-5 rounded-full object-cover shrink-0 border border-[#444]"
+                        className="w-5 h-5 rounded-full object-cover shrink-0 border border-white/5 shadow-sm"
                       />
                     ) : (
-                      <div className="w-5 h-5 rounded-full bg-[#333] flex items-center justify-center text-[9px] text-[#A3A3A3] font-bold shrink-0 font-mono">
+                      <div className="w-5 h-5 rounded-full bg-white/[0.05] border border-white/5 flex items-center justify-center text-[9px] text-[#A3A3A3] font-bold shrink-0 font-mono">
                         {emcee.name.charAt(0).toUpperCase()}
                       </div>
                     )}
@@ -668,10 +668,10 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
         </div>)} */}
 
       {selectedNode && selectedNode.group === 'Emcee' && (
-        <div className="absolute left-6 top-24 z-20 w-80 bg-[#121212]/95 backdrop-blur-xl border border-[#2F2F2F] rounded-md shadow-2xl overflow-hidden flex flex-col transition-all duration-300">
+        <div className="absolute left-6 top-24 z-20 w-80 bg-[#121212]/30 backdrop-blur-md border border-white/5 rounded-lg overflow-hidden flex flex-col transition-all duration-300 opacity-90 hover:opacity-100 shadow-none">
 
           {/* Portrait Header */}
-          <div className="relative w-full  bg-[#202020]">
+          <div className="relative w-full bg-transparent">
             {selectedNode.avatar_url ? (
               <img
                 src={selectedNode.avatar_url}
@@ -679,7 +679,7 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
                 className="w-full h-full object-cover aspect-[4/5]"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-[#A3A3A3] text-6xl font-bold font-mono border-b border-[#2F2F2F]">
+              <div className="w-full h-full flex items-center justify-center text-[#A3A3A3] text-6xl font-bold font-mono border-b border-white/5">
                 {selectedNode.name.charAt(0).toUpperCase()}
               </div>
             )}
@@ -687,13 +687,13 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
             {/* Close Button */}
             <button
               onClick={() => setSelectedNodeId(null)}
-              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-black/40 hover:bg-black/70 text-white rounded-full backdrop-blur-md transition-colors"
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-black/20 hover:bg-black/55 text-white/80 hover:text-white rounded-full border border-white/10 backdrop-blur-sm transition-all z-20"
             >
               ✕
             </button>
 
             {/* Gradient Overlay & Name */}
-            <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-[#121212] via-[#121212]/80 to-transparent pt-20 pb-2 px-3">
+            <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-[#121212]/70 via-[#121212]/30 to-transparent pt-20 pb-2 px-3">
               <h2 className="text-3xl font-bold text-[#EFEFEF] truncate tracking-tight">
                 {selectedNode.name}
               </h2>
@@ -708,7 +708,7 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
           {/* Details Body */}
           <div className="px-3 pb-3 pt-2 space-y-5">
             {selectedNode.total_views != null && (
-              <div className="flex justify-between items-end border-b border-[#2F2F2F] pb-3">
+              <div className="flex justify-between items-end border-b border-white/5 pb-3">
                 <p className="text-xs text-[#A3A3A3] uppercase tracking-widest font-medium">Total Views</p>
                 <p className="text-lg text-[#EFEFEF] font-mono leading-none">{selectedNode.total_views.toLocaleString()}</p>
               </div>
@@ -718,21 +718,21 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
             <div>
               <p className="text-xs text-[#A3A3A3] uppercase tracking-widest mb-3 font-medium">Battle Statistics</p>
               <div className="grid grid-cols-2 gap-2">
-                <div className="bg-[#1A1A1A] p-3 rounded-md border border-[#2F2F2F] flex flex-col justify-between">
+                <div className="bg-white/[0.02] p-3 rounded-md border border-white/5 flex flex-col justify-between transition-all hover:bg-white/[0.04]">
                   <p className="text-[10px] text-[#A3A3A3] uppercase tracking-wider">Matches</p>
                   <p className="text-xl font-mono text-[#EFEFEF] mt-1">{nodeStats[selectedNode.id]?.total || 0}</p>
                 </div>
-                <div className="bg-[#1A1A1A] p-3 rounded-md border border-[#2F2F2F] flex flex-col justify-between">
+                <div className="bg-white/[0.02] p-3 rounded-md border border-white/5 flex flex-col justify-between transition-all hover:bg-white/[0.04]">
                   <p className="text-[10px] text-[#A3A3A3] uppercase tracking-wider">Win Rate</p>
                   <p className="text-xl font-mono mt-1" style={{ color: getWinRateColor(nodeStats[selectedNode.id]?.winRate || 0) }}>
                     {(nodeStats[selectedNode.id]?.winRate * 100).toFixed(1)}%
                   </p>
                 </div>
-                <div className="bg-[#1A1A1A] p-3 rounded-md border border-[#22c55e]/20 flex flex-col justify-between">
+                <div className="bg-white/[0.02] p-3 rounded-md border border-[#22c55e]/15 flex flex-col justify-between transition-all hover:bg-white/[0.04]">
                   <p className="text-[10px] text-[#A3A3A3] uppercase tracking-wider">Wins</p>
                   <p className="text-xl font-mono text-[#4ade80] mt-1">{nodeStats[selectedNode.id]?.wins || 0}</p>
                 </div>
-                <div className="bg-[#1A1A1A] p-3 rounded-md border border-[#ef4444]/20 flex flex-col justify-between">
+                <div className="bg-white/[0.02] p-3 rounded-md border border-[#ef4444]/15 flex flex-col justify-between transition-all hover:bg-white/[0.04]">
                   <p className="text-[10px] text-[#A3A3A3] uppercase tracking-wider">Losses</p>
                   <p className="text-xl font-mono text-[#f87171] mt-1">{nodeStats[selectedNode.id]?.losses || 0}</p>
                 </div>
@@ -756,9 +756,9 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
         const targetNode = graphData.nodes.find(n => n.id === targetId);
 
         return (
-          <div className="absolute left-6 top-24 z-20 w-80 bg-[#121212]/95 backdrop-blur-xl border border-[#2F2F2F] rounded-md shadow-2xl overflow-hidden flex flex-col transition-all duration-300">
+          <div className="absolute left-6 top-24 z-20 w-80 bg-[#121212]/30 backdrop-blur-md border border-white/5 rounded-lg overflow-hidden flex flex-col transition-all duration-300 opacity-90 hover:opacity-100 shadow-none">
             {/* Matchup Header */}
-            <div className="relative w-full bg-[#202020] aspect-[16/10] overflow-hidden flex items-center justify-center border-b border-[#2F2F2F] shrink-0">
+            <div className="relative w-full bg-transparent aspect-[16/10] overflow-hidden flex items-center justify-center border-b border-white/5 shrink-0">
               {/* Background Graphic or Gradient */}
               <div className="absolute inset-0 bg-gradient-to-br from-[#1E293B] via-[#0F172A] to-[#1E293B] opacity-50" />
 
@@ -770,17 +770,17 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
                     <img
                       src={sourceNode.avatar_url}
                       alt={sourceName}
-                      className="w-14 h-14 rounded-full object-cover border-2 border-[#4ade80] shadow-lg"
+                      className="w-14 h-14 rounded-full object-cover border-2 border-[#4ade80]/80 shadow-md"
                     />
                   ) : (
-                    <div className="w-14 h-14 rounded-full bg-[#1A1A1A] border-2 border-[#4ade80] flex items-center justify-center text-[#EFEFEF] font-bold text-lg shadow-lg font-mono">
+                    <div className="w-14 h-14 rounded-full bg-white/[0.05] border-2 border-[#4ade80]/80 flex items-center justify-center text-[#EFEFEF] font-bold text-lg shadow-md font-mono">
                       {sourceName.charAt(0).toUpperCase()}
                     </div>
                   )}
                 </div>
 
                 {/* Matchup Type Indicator */}
-                <div className="px-2.5 py-1 bg-black/60 backdrop-blur-md rounded-full border border-[#2F2F2F] text-[10px] font-bold text-[#A3A3A3] shadow-md uppercase tracking-wider">
+                <div className="px-2.5 py-1 bg-black/40 backdrop-blur-sm rounded-full border border-white/5 text-[10px] font-bold text-[#A3A3A3] uppercase tracking-wider">
                   {selectedLink.type === 'DEFEATED' ? 'def.' : 'vs'}
                 </div>
 
@@ -790,10 +790,10 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
                     <img
                       src={targetNode.avatar_url}
                       alt={targetName}
-                      className="w-14 h-14 rounded-full object-cover border-2 border-[#f87171] shadow-lg"
+                      className="w-14 h-14 rounded-full object-cover border-2 border-[#f87171]/80 shadow-md"
                     />
                   ) : (
-                    <div className="w-14 h-14 rounded-full bg-[#1A1A1A] border-2 border-[#f87171] flex items-center justify-center text-[#EFEFEF] font-bold text-lg shadow-lg font-mono">
+                    <div className="w-14 h-14 rounded-full bg-white/[0.05] border-2 border-[#f87171]/80 flex items-center justify-center text-[#EFEFEF] font-bold text-lg shadow-md font-mono">
                       {targetName.charAt(0).toUpperCase()}
                     </div>
                   )}
@@ -803,13 +803,13 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
               {/* Close Button */}
               <button
                 onClick={() => setSelectedLink(null)}
-                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-black/40 hover:bg-black/70 text-white rounded-full backdrop-blur-md transition-colors z-20"
+                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-black/20 hover:bg-black/55 text-white/80 hover:text-white rounded-full border border-white/10 backdrop-blur-sm transition-all z-20"
               >
                 ✕
               </button>
 
               {/* Gradient Overlay & Name */}
-              <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-[#121212] via-[#121212]/80 to-transparent pt-12 pb-2 px-3">
+              <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-[#121212]/70 via-[#121212]/30 to-transparent pt-12 pb-2 px-3">
                 <h2 className="text-xl font-bold text-[#EFEFEF] truncate tracking-tight">
                   {selectedLink.battle_name || 'Battle Details'}
                 </h2>
@@ -824,7 +824,7 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
             {/* Details Body */}
             <div className="px-3 pb-3 pt-2 space-y-5">
               {selectedLink.view_count != null && (
-                <div className="flex justify-between items-end border-b border-[#2F2F2F] pb-3">
+                <div className="flex justify-between items-end border-b border-white/5 pb-3">
                   <p className="text-xs text-[#A3A3A3] uppercase tracking-widest font-medium">Views</p>
                   <p className="text-lg text-[#EFEFEF] font-mono leading-none">{selectedLink.view_count.toLocaleString()}</p>
                 </div>
@@ -834,20 +834,20 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
               <div>
                 <p className="text-xs text-[#A3A3A3] uppercase tracking-widest mb-3 font-medium">Battle Info</p>
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="bg-[#1A1A1A] p-3 rounded-md border border-[#2F2F2F] flex flex-col justify-between">
+                  <div className="bg-white/[0.02] p-3 rounded-md border border-white/5 flex flex-col justify-between transition-all hover:bg-white/[0.04]">
                     <p className="text-[10px] text-[#A3A3A3] uppercase tracking-wider">Format</p>
                     <p className="text-sm font-mono text-[#EFEFEF] mt-1">{FORMAT_LABELS[selectedLink.match_format] || selectedLink.match_format || 'N/A'}</p>
                   </div>
-                  <div className="bg-[#1A1A1A] p-3 rounded-md border border-[#2F2F2F] flex flex-col justify-between">
+                  <div className="bg-white/[0.02] p-3 rounded-md border border-white/5 flex flex-col justify-between transition-all hover:bg-white/[0.04]">
                     <p className="text-[10px] text-[#A3A3A3] uppercase tracking-wider">Type</p>
                     <p className="text-sm font-mono text-[#EFEFEF] mt-1">{MATCH_TYPE_LABELS[selectedLink.match_type] || selectedLink.match_type || 'N/A'}</p>
                   </div>
-                  <div className="bg-[#1A1A1A] p-3 rounded-md border border-[#2F2F2F] flex flex-col justify-between">
+                  <div className="bg-white/[0.02] p-3 rounded-md border border-white/5 flex flex-col justify-between transition-all hover:bg-white/[0.04]">
                     <p className="text-[10px] text-[#A3A3A3] uppercase tracking-wider">Year</p>
                     <p className="text-sm font-mono text-[#EFEFEF] mt-1">{selectedLink.year || 'N/A'}</p>
                   </div>
-                  <div className={`bg-[#1A1A1A] p-3 rounded-md flex flex-col justify-between border ${selectedLink.type === 'DEFEATED' ? 'border-[#22c55e]/20' : 'border-[#2F2F2F]'
-                    }`}>
+                  <div className={`bg-white/[0.02] p-3 rounded-md flex flex-col justify-between border ${selectedLink.type === 'DEFEATED' ? 'border-[#22c55e]/15' : 'border-white/5'
+                    } transition-all hover:bg-white/[0.04]`}>
                     <p className="text-[10px] text-[#A3A3A3] uppercase tracking-wider">Outcome</p>
                     <p className={`text-sm font-mono mt-1 truncate ${selectedLink.type === 'DEFEATED' ? 'text-[#4ade80]' : 'text-[#EFEFEF]'
                       }`} title={selectedLink.type === 'DEFEATED' ? `${sourceName} won` : 'Draw'}>
