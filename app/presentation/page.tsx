@@ -72,13 +72,14 @@ const slides: Slide[] = [
     ]
   },
   {
-    title: 'fliptop3d.vercel.app',
+    title: 'FlipTop3d',
     subtitle: 'ROUND.06 // FlipTop3d',
     bullets: [
+      'Site: https://fliptop3d.shansurat.dev',
       'Developed with ❤️ by: Shan Surat',
       'Requirement for: Final Project for LIS 198 | Data Structures'
     ],
-    imageUrl: '/assets/qrcode.png'
+    imageUrl: '/assets/fliptop3d-qr.png'
   }
 ];
 
