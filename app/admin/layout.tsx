@@ -10,7 +10,6 @@ export default function Neo4jLayout({ children }: { children: React.ReactNode })
   const navItems = [
     { name: 'Emcees', href: '/admin' },
     { name: 'Battles', href: '/admin/battles' },
-    { name: 'Results', href: '/admin/participants' },
     { name: 'Events', href: '/admin/events' },
   ];
 

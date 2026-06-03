@@ -370,7 +370,7 @@ export async function syncBattleRelationships() {
       });
 
       await invalidateCache();
-      revalidatePath('/admin/participants');
+      revalidatePath('/admin/battles');
       return { success: true, count: result };
     } finally {
       await session.close();
@@ -416,7 +416,7 @@ export async function updateRelationshipOutcome(e1_id: string, e2_id: string, ba
     });
     
     await invalidateCache();
-    revalidatePath('/admin/participants');
+    revalidatePath('/admin/battles');
     return { success: true };
   } catch (error: unknown) {
     console.error('Update error:', error);
@@ -455,7 +455,7 @@ export async function createRelationship(e1_id: string, e2_id: string, battle_id
     });
     
     await invalidateCache();
-    revalidatePath('/admin/participants');
+    revalidatePath('/admin/battles');
     return { success: true };
   } catch (error: unknown) {
     console.error('Create error:', error);
@@ -659,7 +659,14 @@ export async function deleteBattle(id: string) {
   const session = driver.session();
   try {
     await session.executeWrite(async (tx) => {
+      // Delete the battle node
       await tx.run(`MATCH (b:Battle {id: $id}) DETACH DELETE b`, { id });
+      // Delete any associated participant relationships referencing this battle_id
+      await tx.run(`
+        MATCH ()-[r {battle_id: $id}]-()
+        WHERE type(r) IN ['BATTLED', 'DEFEATED']
+        DELETE r
+      `, { id });
     });
     await invalidateCache();
     revalidatePath('/admin/battles');
@@ -672,6 +679,101 @@ export async function deleteBattle(id: string) {
     await session.close();
   }
 }
+
+export async function saveBattleAndResult(
+  id: string,
+  name: string,
+  match_type: string,
+  match_format: string,
+  event_id: string | null,
+  e1_id: string | null,
+  e2_id: string | null,
+  outcome: 'e1_won' | 'e2_won' | 'draw' | null
+) {
+  const driver = getNeo4jDriver();
+  const session = driver.session();
+  try {
+    await session.executeWrite(async (tx) => {
+      // 1. Update/Create the Battle node and HELD_AT event link
+      await tx.run(
+        `
+        MERGE (b:Battle {id: $id})
+        SET b.name = $name, b.match_type = $match_type, b.match_format = $match_format
+        WITH b
+        OPTIONAL MATCH (b)-[r:HELD_AT]->()
+        DELETE r
+        WITH b
+        CALL {
+          WITH b
+          WITH b WHERE $event_id IS NOT NULL
+          MATCH (e:Event {id: $event_id})
+          MERGE (b)-[:HELD_AT]->(e)
+          RETURN 1 AS _
+          UNION
+          WITH b
+          WITH b WHERE $event_id IS NULL
+          RETURN 1 AS _
+        }
+        RETURN b
+        `,
+        { id, name, match_type, match_format, event_id }
+      );
+
+      // 2. Delete any existing outcome relationships for this battle_id
+      await tx.run(
+        `
+        MATCH ()-[r {battle_id: $id}]-()
+        WHERE type(r) IN ['BATTLED', 'DEFEATED']
+        DELETE r
+        `,
+        { id }
+      );
+
+      // 3. Create the new outcome relationship if both emcees are selected
+      if (e1_id && e2_id && e1_id !== e2_id && outcome) {
+        if (outcome === 'e1_won') {
+          await tx.run(
+            `
+            MATCH (winner:Emcee {id: $e1_id})
+            MATCH (loser:Emcee {id: $e2_id})
+            MERGE (winner)-[:DEFEATED {battle_id: $id}]->(loser)
+            `,
+            { e1_id, e2_id, id }
+          );
+        } else if (outcome === 'e2_won') {
+          await tx.run(
+            `
+            MATCH (winner:Emcee {id: $e2_id})
+            MATCH (loser:Emcee {id: $e1_id})
+            MERGE (winner)-[:DEFEATED {battle_id: $id}]->(loser)
+            `,
+            { e1_id, e2_id, id }
+          );
+        } else {
+          await tx.run(
+            `
+            MATCH (e1:Emcee {id: $e1_id})
+            MATCH (e2:Emcee {id: $e2_id})
+            MERGE (e1)-[:BATTLED {battle_id: $id}]-(e2)
+            `,
+            { e1_id, e2_id, id }
+          );
+        }
+      }
+    });
+
+    await invalidateCache();
+    revalidatePath('/admin/battles');
+    return { success: true };
+  } catch (error: unknown) {
+    console.error('Error saving battle and result:', error);
+    const message = error instanceof Error ? error.message : 'Failed to save battle and result';
+    return { success: false, error: message };
+  } finally {
+    await session.close();
+  }
+}
+
 
 export async function deleteEvent(id: string) {
   if (!id) return { success: false, error: 'ID is required' };
@@ -704,8 +806,7 @@ export async function deleteRelationship(e1_id: string, e2_id: string, battle_id
       `, { e1_id, e2_id, battle_id });
     });
     await invalidateCache();
-    revalidatePath('/admin/participants');
-    revalidatePath('/admin/participants');
+    revalidatePath('/admin/battles');
     return { success: true };
   } catch (error: unknown) {
     console.error('Delete error:', error);

@@ -1,5 +1,5 @@
 import { getNeo4jDriver } from '@/lib/neo4j';
-import { syncBattlesFromSupabase, updateBattle, createBattle, deleteBattle } from '../actions';
+import { syncBattlesFromSupabase, syncBattleRelationships, deleteBattle, saveBattleAndResult } from '../actions';
 import BattlesClientPage from './BattlesClientPage';
 
 export const dynamic = 'force-dynamic';
@@ -10,17 +10,40 @@ export default async function BattlesAdminPage() {
   const session = driver.session();
   let battles: any[] = [];
   let events: { id: string; name: string }[] = [];
+  let emcees: { id: string; stage_name: string }[] = [];
 
   try {
     const result = await session.run(`
       MATCH (b:Battle)
-      OPTIONAL MATCH (b)-[:HELD_AT]->(e:Event)
-      RETURN b, e.id AS event_id
+      OPTIONAL MATCH (b)-[:HELD_AT]->(ev:Event)
+      OPTIONAL MATCH (e1:Emcee)-[r]->(e2:Emcee) WHERE r.battle_id = b.id AND type(r) IN ['BATTLED', 'DEFEATED']
+      WITH b, ev,
+           CASE WHEN r IS NOT NULL THEN {
+             e1_id: e1.id,
+             e1_name: e1.stage_name,
+             e2_id: e2.id,
+             e2_name: e2.stage_name,
+             outcome: type(r)
+           } ELSE null END AS rel
+      WITH b, ev, collect(rel) AS rels
+      RETURN b, ev.id AS event_id, ev.name AS event_name,
+             [r in rels WHERE r is not null] AS relationships
       ORDER BY b.name ASC
     `);
     battles = result.records.map((record) => {
       const bProps = record.get('b').properties;
-      return { ...bProps, event_id: record.get('event_id') };
+      const rels = record.get('relationships') || [];
+      const rel = rels[0] || null;
+      return {
+        ...bProps,
+        event_id: record.get('event_id'),
+        event_name: record.get('event_name'),
+        e1_id: rel ? rel.e1_id : null,
+        e1_name: rel ? rel.e1_name : null,
+        e2_id: rel ? rel.e2_id : null,
+        e2_name: rel ? rel.e2_name : null,
+        outcome: rel ? rel.outcome : null
+      };
     });
 
     const eventsResult = await session.run(`
@@ -29,6 +52,14 @@ export default async function BattlesAdminPage() {
       ORDER BY e.year DESC
     `);
     events = eventsResult.records.map(r => ({ id: r.get('id'), name: r.get('name') }));
+
+    const emceesResult = await session.run(`
+      MATCH (e:Emcee)
+      RETURN e.id AS id, e.stage_name AS name
+      ORDER BY e.stage_name ASC
+    `);
+    emcees = emceesResult.records.map(r => ({ id: r.get('id'), stage_name: r.get('name') }));
+
   } catch (error) {
     console.error('Error fetching from Neo4j:', error);
   } finally {
@@ -40,16 +71,17 @@ export default async function BattlesAdminPage() {
       <div className="mb-10">
         <h1 className="text-3xl font-semibold text-[#FFFFFF] tracking-tight mb-2">Battles</h1>
         <p className="text-[#A3A3A3] text-sm">
-          Manage battle graph nodes and synchronize records from Supabase.
+          Manage battles and outcome results in a single unified dashboard, sync data from Supabase.
         </p>
       </div>
 
       <BattlesClientPage
         initialBattles={battles}
         availableEvents={events}
+        availableEmcees={emcees}
         syncAction={syncBattlesFromSupabase}
-        updateAction={updateBattle}
-        createAction={createBattle}
+        syncRelationshipsAction={syncBattleRelationships}
+        saveAction={saveBattleAndResult}
         deleteAction={deleteBattle}
       />
     </div>
