@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState, useMemo } from 'react';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 
 const ForceGraph3D = dynamic(() => import('react-force-graph-3d'), { ssr: false });
 
@@ -410,9 +411,11 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
                       }`}
                   >
                     {hasAvatar ? (
-                      <img
+                      <Image
                         src={emcee.avatar_url!}
                         alt={emcee.name}
+                        width={20}
+                        height={20}
                         className="w-5 h-5 rounded-full object-cover shrink-0 border border-white/5 shadow-sm"
                       />
                     ) : (
@@ -685,9 +688,11 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
           {/* Portrait Header */}
           <div className="relative w-full bg-transparent">
             {selectedNode.avatar_url ? (
-              <img
+              <Image
                 src={selectedNode.avatar_url}
                 alt={selectedNode.name}
+                width={320}
+                height={400}
                 className="w-full h-full object-cover aspect-[4/5]"
               />
             ) : (
@@ -779,9 +784,11 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
                 {/* Source Emcee */}
                 <div className="flex flex-col items-center">
                   {sourceNode?.avatar_url ? (
-                    <img
+                    <Image
                       src={sourceNode.avatar_url}
                       alt={sourceName}
+                      width={56}
+                      height={56}
                       className="w-14 h-14 rounded-full object-cover border-2 border-[#4ade80]/80 shadow-md"
                     />
                   ) : (
@@ -799,9 +806,11 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
                 {/* Target Emcee */}
                 <div className="flex flex-col items-center">
                   {targetNode?.avatar_url ? (
-                    <img
+                    <Image
                       src={targetNode.avatar_url}
                       alt={targetName}
+                      width={56}
+                      height={56}
                       className="w-14 h-14 rounded-full object-cover border-2 border-[#f87171]/80 shadow-md"
                     />
                   ) : (
