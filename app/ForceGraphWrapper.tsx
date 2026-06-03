@@ -303,7 +303,7 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
       {/* Mobile Menu FAB */}
       <button
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="md:hidden absolute bottom-6 left-6 z-[60] w-12 h-12 rounded-full bg-[#121212]/90 backdrop-blur-md border border-white/10 flex items-center justify-center text-white shadow-lg pointer-events-auto transition-transform hover:scale-105 active:scale-95"
+        className="md:hidden absolute bottom-6 left-6 z-[60] w-10 h-10 rounded-md bg-[#121212]/30 backdrop-blur-md border border-white/5 flex items-center justify-center text-[#EFEFEF] opacity-60 hover:opacity-100 pointer-events-auto transition-all"
       >
         {isMobileMenuOpen ? (
           <span className="text-xl">✕</span>
