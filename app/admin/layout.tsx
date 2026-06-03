@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { signOut } from '../login/actions';
 
 export default function Neo4jLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -14,11 +15,11 @@ export default function Neo4jLayout({ children }: { children: React.ReactNode })
   ];
 
   return (
-    <div className="flex min-h-screen bg-[#191919] text-[#cfcfcf] font-sans">
+    <div className="flex min-h-screen bg-[#0a0a0a] text-[#A3A3A3] font-sans">
       {/* Sidebar */}
-      <div className="w-64 fixed h-screen top-0 left-0 bg-[#191919] border-r border-[#2f2f2f] flex flex-col z-50">
-        <div className="p-4 border-b border-[#2f2f2f]">
-          <h1 className="text-sm font-semibold text-[#FFFFFF] tracking-tight">fliptop.3d Admin</h1>
+      <div className="w-64 fixed h-screen top-0 left-0 bg-[#0a0a0a] border-r border-white/5 flex flex-col z-50">
+        <div className="p-4 border-b border-white/5">
+          <h1 className="text-xs font-bold text-[#EFEFEF] tracking-widest uppercase">fliptop.3d Admin</h1>
         </div>
         <nav className="flex-1 p-2 space-y-1">
           {navItems.map((item) => {
@@ -27,9 +28,9 @@ export default function Neo4jLayout({ children }: { children: React.ReactNode })
               <Link
                 key={item.name}
                 href={item.href}
-                className={`block px-3 py-2 rounded-md text-sm transition-colors ${isActive
-                  ? 'bg-[#2F2F2F] text-white font-medium'
-                  : 'text-[#A3A3A3] hover:bg-[#202020] hover:text-[#cfcfcf]'
+                className={`block px-3 py-2 rounded-md text-xs tracking-wider uppercase transition-all duration-200 ${isActive
+                  ? 'bg-white/[0.06] text-[#EFEFEF] font-semibold'
+                  : 'text-[#888] hover:bg-white/[0.02] hover:text-[#EFEFEF]'
                   }`}
               >
                 {item.name}
@@ -38,21 +39,15 @@ export default function Neo4jLayout({ children }: { children: React.ReactNode })
           })}
         </nav>
 
-        <div className="p-4 border-t border-[#2f2f2f]">
-          <Link href="/" className="w-full text-left px-3 py-2 rounded-md text-sm text-[#A3A3A3] hover:bg-[#202020] hover:text-[#cfcfcf] transition-colors mb-2 block">
+        <div className="p-4 border-t border-white/5">
+          <Link href="/" className="w-full text-left px-3 py-2 rounded-md text-xs tracking-wider uppercase text-[#888] hover:bg-white/[0.02] hover:text-[#EFEFEF] transition-all mb-2 block">
             &larr; Public Page
           </Link>
           <button
             onClick={async () => {
-              const { createClient } = await import('@supabase/supabase-js');
-              const supabase = createClient(
-                process.env.NEXT_PUBLIC_SUPABASE_URL!,
-                process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-              );
-              await supabase.auth.signOut();
-              window.location.href = '/login';
+              await signOut();
             }}
-            className="w-full text-left px-3 py-2 rounded-md text-sm text-red-400 hover:bg-red-950/30 hover:text-red-300 transition-colors"
+            className="w-full text-left px-3 py-2 rounded-md text-xs tracking-wider uppercase text-red-400/80 hover:bg-red-950/20 hover:text-red-300 transition-all cursor-pointer"
           >
             Logout
           </button>

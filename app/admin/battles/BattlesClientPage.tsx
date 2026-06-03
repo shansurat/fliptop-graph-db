@@ -178,13 +178,13 @@ export default function BattlesClientPage({ initialBattles, availableEvents = []
 
   return (
     <div className="w-full">
-      <div className="flex justify-between items-center mb-8 border-b border-[#2f2f2f] pb-4">
-        <h2 className="text-xl font-semibold text-[#cfcfcf]">Battles</h2>
+      <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
+        <h2 className="text-lg font-bold text-[#EFEFEF] tracking-widest uppercase">Battles</h2>
         <div className="flex gap-3">
           {createAction && (
             <button
               onClick={() => setIsCreating(true)}
-              className="bg-[#5E87C9] hover:bg-[#4A72B3] text-white text-sm py-1.5 px-4 rounded transition-colors font-medium shadow-sm"
+              className="bg-white/[0.07] hover:bg-white/[0.12] text-[#EFEFEF] border border-white/10 rounded px-4 py-1.5 text-xs font-semibold uppercase tracking-wider transition-all duration-300 cursor-pointer"
             >
               Add New Battle
             </button>
@@ -192,7 +192,7 @@ export default function BattlesClientPage({ initialBattles, availableEvents = []
           <button
             onClick={handleSync}
             disabled={isSyncing}
-            className="bg-transparent hover:bg-[#2f2f2f] border border-[#2f2f2f] text-[#cfcfcf] text-sm py-1.5 px-3 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className="bg-transparent hover:bg-white/[0.04] border border-white/5 text-[#A3A3A3] hover:text-[#EFEFEF] text-xs py-1.5 px-3 rounded transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer"
           >
             {isSyncing ? (
               <>
@@ -210,28 +210,28 @@ export default function BattlesClientPage({ initialBattles, availableEvents = []
       </div>
 
       {isCreating && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-[#191919] border border-[#2f2f2f] rounded-lg p-6 w-full max-w-md shadow-2xl">
-            <h3 className="text-lg font-semibold text-white mb-4">Add New Battle</h3>
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#121212]/80 backdrop-blur-md border border-white/5 rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-xs font-bold text-[#EFEFEF] tracking-widest uppercase mb-4">Add New Battle</h3>
             <form onSubmit={handleCreateSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm text-[#A3A3A3] mb-1">Name</label>
+                <label className="block text-[10px] text-[#888] uppercase tracking-widest font-semibold mb-1.5">Name</label>
                 <input
                   type="text"
                   required
                   value={createForm.name}
                   onChange={(e) => setCreateForm({ ...createForm, name: e.target.value })}
-                  className="w-full bg-[#202020] border border-[#2f2f2f] text-[#cfcfcf] rounded px-3 py-2 text-sm focus:border-[#5E87C9] focus:outline-none transition-colors"
+                  className="w-full bg-[#121212]/40 border border-white/5 text-[#A3A3A3] rounded px-3 py-2 text-xs focus:text-[#EFEFEF] focus:border-white/20 focus:bg-white/[0.04] focus:outline-none transition-all placeholder-[#444]"
                   placeholder="e.g. Loonie vs Abra"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm text-[#A3A3A3] mb-1">Match Type</label>
+                  <label className="block text-[10px] text-[#888] uppercase tracking-widest font-semibold mb-1.5">Match Type</label>
                   <select
                     value={createForm.match_type}
                     onChange={(e) => setCreateForm({ ...createForm, match_type: e.target.value })}
-                    className="w-full bg-[#202020] border border-[#2f2f2f] text-[#cfcfcf] rounded px-3 py-2 text-sm focus:border-[#5E87C9] focus:outline-none transition-colors"
+                    className="w-full bg-[#121212]/40 border border-white/5 text-[#A3A3A3] rounded px-3 py-2 text-xs focus:text-[#EFEFEF] focus:border-white/20 focus:bg-white/[0.04] focus:outline-none transition-all cursor-pointer"
                   >
                     <option value="tournament">Tournament</option>
                     <option value="promo">Promo</option>
@@ -239,11 +239,11 @@ export default function BattlesClientPage({ initialBattles, availableEvents = []
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm text-[#A3A3A3] mb-1">Matchup Format</label>
+                  <label className="block text-[10px] text-[#888] uppercase tracking-widest font-semibold mb-1.5">Matchup Format</label>
                   <select
                     value={createForm.match_format}
                     onChange={(e) => setCreateForm({ ...createForm, match_format: e.target.value })}
-                    className="w-full bg-[#202020] border border-[#2f2f2f] text-[#cfcfcf] rounded px-3 py-2 text-sm focus:border-[#5E87C9] focus:outline-none transition-colors"
+                    className="w-full bg-[#121212]/40 border border-white/5 text-[#A3A3A3] rounded px-3 py-2 text-xs focus:text-[#EFEFEF] focus:border-white/20 focus:bg-white/[0.04] focus:outline-none transition-all cursor-pointer"
                   >
                     <option value="1v1">1v1</option>
                     <option value="2v2">2v2</option>
@@ -251,11 +251,11 @@ export default function BattlesClientPage({ initialBattles, availableEvents = []
                 </div>
               </div>
               <div>
-                <label className="block text-sm text-[#A3A3A3] mb-1">Event (Optional)</label>
+                <label className="block text-[10px] text-[#888] uppercase tracking-widest font-semibold mb-1.5">Event (Optional)</label>
                 <select
                   value={createForm.event_id}
                   onChange={(e) => setCreateForm({ ...createForm, event_id: e.target.value })}
-                  className="w-full bg-[#202020] border border-[#2f2f2f] text-[#cfcfcf] rounded px-3 py-2 text-sm focus:border-[#5E87C9] focus:outline-none transition-colors"
+                  className="w-full bg-[#121212]/40 border border-white/5 text-[#A3A3A3] rounded px-3 py-2 text-xs focus:text-[#EFEFEF] focus:border-white/20 focus:bg-white/[0.04] focus:outline-none transition-all cursor-pointer"
                 >
                   <option value="">No Event</option>
                   {availableEvents.map(ev => (
@@ -267,13 +267,13 @@ export default function BattlesClientPage({ initialBattles, availableEvents = []
                 <button
                   type="button"
                   onClick={() => setIsCreating(false)}
-                  className="px-4 py-2 text-sm text-[#A3A3A3] hover:text-white transition-colors"
+                  className="px-4 py-2 text-xs text-[#888] hover:text-[#EFEFEF] uppercase tracking-wider transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-[#5E87C9] hover:bg-[#4A72B3] text-white text-sm rounded transition-colors font-medium"
+                  className="px-4 py-2 bg-white/[0.07] hover:bg-white/[0.12] text-[#EFEFEF] border border-white/10 text-xs rounded transition-all uppercase tracking-wider font-semibold cursor-pointer"
                 >
                   Create
                 </button>
@@ -292,12 +292,12 @@ export default function BattlesClientPage({ initialBattles, availableEvents = []
             setSearchQuery(e.target.value);
             setCurrentPage(1); // Reset to first page on search
           }}
-          className="w-full max-w-md bg-[#191919] border border-[#2f2f2f] text-[#cfcfcf] rounded px-3 py-2 text-sm focus:border-[#5E87C9] focus:outline-none transition-colors"
+          className="w-full max-w-md bg-[#121212]/30 border border-white/5 text-[#A3A3A3] rounded px-3 py-2 text-xs focus:text-[#EFEFEF] focus:border-white/20 focus:bg-white/[0.04] focus:outline-none transition-all"
         />
       </div>
 
       {message && (
-        <div className={`p-3 mb-6 rounded text-sm ${message.type === 'success' ? 'bg-[#2F2F2F] text-[#cfcfcf] border border-[#373737]' : 'bg-[#3b2a2a] text-[#eb5757] border border-[#4d3636]'}`}>
+        <div className={`p-3 mb-6 rounded text-xs font-mono border ${message.type === 'success' ? 'bg-[#121212]/20 text-[#A3A3A3] border-white/5' : 'bg-red-950/20 text-red-400/80 border-red-500/10'}`}>
           {message.text}
         </div>
       )}
@@ -305,7 +305,7 @@ export default function BattlesClientPage({ initialBattles, availableEvents = []
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="text-[#707070] text-sm border-b border-[#2f2f2f]">
+            <tr className="text-[#888] text-xs border-b border-white/5">
               <th className="py-2 px-3 font-normal cursor-pointer hover:text-white select-none transition-colors" onClick={() => requestSort('name')}>
                 Name {sortConfig?.key === 'name' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : ''}
               </th>
@@ -324,10 +324,10 @@ export default function BattlesClientPage({ initialBattles, availableEvents = []
               <th className="py-2 px-3 font-normal">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#2f2f2f]">
+          <tbody className="divide-y divide-white/[0.03]">
             {battles.length === 0 ? (
               <tr>
-                <td colSpan={7} className="py-8 text-center text-[#707070] text-sm">
+                <td colSpan={7} className="py-8 text-center text-[#707070] text-xs">
                   No records found in Neo4j. Try syncing from Supabase.
                 </td>
               </tr>
@@ -335,25 +335,25 @@ export default function BattlesClientPage({ initialBattles, availableEvents = []
               paginatedBattles.map((battle) => {
                 const eventName = availableEvents.find(e => e.id === battle.event_id)?.name;
                 return (
-                  <tr key={battle.id} className="hover:bg-[#202020] transition-colors group">
-                    <td className="py-2.5 px-3 text-sm text-[#cfcfcf]">
+                  <tr key={battle.id} className="hover:bg-white/[0.02] transition-colors group">
+                    <td className="py-2.5 px-3 text-xs text-[#cfcfcf]">
                       {editingId === battle.id ? (
                         <input
                           type="text"
                           value={editForm.name}
                           onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                          className="w-full bg-[#191919] border border-[#2f2f2f] text-[#cfcfcf] rounded px-2 py-1 text-sm focus:border-[#5E87C9] focus:outline-none transition-colors"
+                          className="w-full bg-[#121212]/40 border border-white/5 text-[#A3A3A3] rounded px-2 py-1 text-xs focus:text-[#EFEFEF] focus:border-white/20 focus:bg-white/[0.04] focus:outline-none transition-all"
                         />
                       ) : (
-                        <span>{battle.name || '-'}</span>
+                        <span className="text-[#EFEFEF] font-medium">{battle.name || '-'}</span>
                       )}
                     </td>
-                    <td className="py-2.5 px-3 text-sm text-[#cfcfcf]">
+                    <td className="py-2.5 px-3 text-xs text-[#cfcfcf]">
                       {editingId === battle.id ? (
                         <select
                           value={editForm.match_type}
                           onChange={(e) => setEditForm({ ...editForm, match_type: e.target.value })}
-                          className="w-full bg-[#191919] border border-[#2f2f2f] text-[#cfcfcf] rounded px-2 py-1 text-sm focus:border-[#5E87C9] focus:outline-none transition-colors"
+                          className="w-full bg-[#121212]/40 border border-white/5 text-[#A3A3A3] rounded px-2 py-1 text-xs focus:text-[#EFEFEF] focus:border-white/20 focus:bg-white/[0.04] focus:outline-none transition-all cursor-pointer"
                         >
                           <option value="tournament">Tournament</option>
                           <option value="promo">Promo</option>
@@ -363,12 +363,12 @@ export default function BattlesClientPage({ initialBattles, availableEvents = []
                         <span className="text-[#A3A3A3] capitalize">{battle.match_type || '-'}</span>
                       )}
                     </td>
-                    <td className="py-2.5 px-3 text-sm text-[#cfcfcf]">
+                    <td className="py-2.5 px-3 text-xs text-[#cfcfcf]">
                       {editingId === battle.id ? (
                         <select
                           value={editForm.match_format}
                           onChange={(e) => setEditForm({ ...editForm, match_format: e.target.value })}
-                          className="w-full bg-[#191919] border border-[#2f2f2f] text-[#cfcfcf] rounded px-2 py-1 text-sm focus:border-[#5E87C9] focus:outline-none transition-colors"
+                          className="w-full bg-[#121212]/40 border border-white/5 text-[#A3A3A3] rounded px-2 py-1 text-xs focus:text-[#EFEFEF] focus:border-white/20 focus:bg-white/[0.04] focus:outline-none transition-all cursor-pointer"
                         >
                           <option value="1v1">1v1</option>
                           <option value="2v2">2v2</option>
@@ -377,15 +377,15 @@ export default function BattlesClientPage({ initialBattles, availableEvents = []
                         <span className="text-[#A3A3A3] capitalize">{battle.match_format || '-'}</span>
                       )}
                     </td>
-                    <td className="py-2.5 px-3 text-sm text-[#cfcfcf]">
-                      <span className="text-[#A3A3A3]">{battle.view_count ? battle.view_count.toLocaleString() : '-'}</span>
+                    <td className="py-2.5 px-3 text-xs text-[#cfcfcf]">
+                      <span className="text-[#A3A3A3] font-mono">{battle.view_count ? battle.view_count.toLocaleString() : '-'}</span>
                     </td>
-                    <td className="py-2.5 px-3 text-sm text-[#cfcfcf]">
+                    <td className="py-2.5 px-3 text-xs text-[#cfcfcf]">
                       {editingId === battle.id ? (
                         <select
                           value={editForm.event_id as string}
                           onChange={(e) => setEditForm({ ...editForm, event_id: e.target.value })}
-                          className="w-full bg-[#191919] border border-[#2f2f2f] text-[#cfcfcf] rounded px-2 py-1 text-sm focus:border-[#5E87C9] focus:outline-none transition-colors"
+                          className="w-full bg-[#121212]/40 border border-white/5 text-[#A3A3A3] rounded px-2 py-1 text-xs focus:text-[#EFEFEF] focus:border-white/20 focus:bg-white/[0.04] focus:outline-none transition-all cursor-pointer"
                         >
                           <option value="">No Event</option>
                           {availableEvents.map(ev => (
@@ -396,17 +396,17 @@ export default function BattlesClientPage({ initialBattles, availableEvents = []
                         <span className="text-[#A3A3A3]">{eventName || '-'}</span>
                       )}
                     </td>
-                    <td className="py-2.5 px-3 text-sm">
+                    <td className="py-2.5 px-3 text-xs">
                       {editingId === battle.id ? (
                         <div className="flex gap-3">
-                          <button onClick={handleSaveEdit} className="text-[#cfcfcf] hover:text-white transition-colors">Save</button>
-                          <button onClick={handleCancelEdit} className="text-[#707070] hover:text-[#A3A3A3] transition-colors">Cancel</button>
+                          <button onClick={handleSaveEdit} className="text-xs text-[#EFEFEF] hover:text-white uppercase tracking-wider transition-colors cursor-pointer">Save</button>
+                          <button onClick={handleCancelEdit} className="text-xs text-[#888] hover:text-[#A3A3A3] uppercase tracking-wider transition-colors cursor-pointer">Cancel</button>
                         </div>
                       ) : (
                         <div className="flex gap-3">
-                          <button onClick={() => handleEditClick(battle)} className="text-[#707070] hover:text-[#cfcfcf] opacity-0 group-hover:opacity-100 transition-all">Edit</button>
+                          <button onClick={() => handleEditClick(battle)} className="text-xs text-[#888] hover:text-[#EFEFEF] opacity-0 group-hover:opacity-100 uppercase tracking-wider transition-all cursor-pointer">Edit</button>
                           {deleteAction && (
-                            <button onClick={() => handleDelete(battle.id)} className="text-[#eb5757] hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all">Delete</button>
+                            <button onClick={() => handleDelete(battle.id)} className="text-xs text-red-400/70 hover:text-red-400 opacity-0 group-hover:opacity-100 uppercase tracking-wider transition-all cursor-pointer">Delete</button>
                           )}
                         </div>
                       )}
@@ -420,7 +420,7 @@ export default function BattlesClientPage({ initialBattles, availableEvents = []
       </div>
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-between mt-4 text-[#707070] text-sm">
+        <div className="flex items-center justify-between mt-4 text-[#888] text-xs select-none">
           <div>
             Showing {filteredBattles.length > 0 ? (currentPage - 1) * pageSize + 1 : 0} to {Math.min(currentPage * pageSize, filteredBattles.length)} of {filteredBattles.length} records
           </div>
@@ -428,14 +428,14 @@ export default function BattlesClientPage({ initialBattles, availableEvents = []
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="px-2 py-1 rounded hover:bg-[#2f2f2f] disabled:opacity-50 disabled:hover:bg-transparent transition-colors"
+              className="px-2 py-1 rounded hover:bg-white/[0.03] disabled:opacity-30 disabled:hover:bg-transparent transition-colors uppercase tracking-wider cursor-pointer"
             >
               Previous
             </button>
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="px-2 py-1 rounded hover:bg-[#2f2f2f] disabled:opacity-50 disabled:hover:bg-transparent transition-colors"
+              className="px-2 py-1 rounded hover:bg-white/[0.03] disabled:opacity-30 disabled:hover:bg-transparent transition-colors uppercase tracking-wider cursor-pointer"
             >
               Next
             </button>
