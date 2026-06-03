@@ -112,7 +112,7 @@ function PresentationPageInner() {
   const currentSlide = slides[safeIndex];
 
   return (
-    <div className="min-h-screen bg-[#080808] flex flex-col justify-between p-12 lg:p-20 text-zinc-300 font-mono">
+    <div className="min-h-[100dvh] bg-[#080808] flex flex-col justify-between p-12 lg:p-20 text-zinc-300 font-mono">
       {/* Top Header */}
       <div className="flex justify-between items-center border-b border-white/5 pb-6 select-none">
         <div className="flex items-center gap-4">

@@ -312,7 +312,7 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
         )}
       </button>
 
-      <div className={`absolute z-[55] flex flex-col gap-2 transition-all duration-300 w-64 pointer-events-auto md:top-4 md:right-4 md:bottom-auto md:left-auto md:opacity-80 group-hover:md:opacity-100 md:translate-y-0 ${isMobileMenuOpen ? 'max-md:bottom-20 max-md:left-6 max-md:opacity-100 max-md:translate-y-0 max-md:max-h-[60vh] max-md:overflow-y-auto custom-scrollbar' : 'max-md:bottom-20 max-md:left-6 max-md:opacity-0 max-md:pointer-events-none max-md:translate-y-4'}`}>
+      <div className={`absolute z-[55] flex flex-col gap-2 transition-all duration-300 w-64 pointer-events-auto md:top-4 md:right-4 md:bottom-auto md:left-auto md:opacity-80 group-hover:md:opacity-100 md:translate-y-0 ${isMobileMenuOpen ? 'max-md:bottom-20 max-md:left-6 max-md:opacity-100 max-md:translate-y-0 max-md:max-h-[60dvh] max-md:overflow-y-auto custom-scrollbar' : 'max-md:bottom-20 max-md:left-6 max-md:opacity-0 max-md:pointer-events-none max-md:translate-y-4'}`}>
 
         <div className='flex gap-2'>
           <select
@@ -681,20 +681,20 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
         </div>)} */}
 
       {selectedNode && selectedNode.group === 'Emcee' && (
-        <div className="absolute z-[40] bg-[#121212]/95 md:bg-[#121212]/30 backdrop-blur-xl md:backdrop-blur-md border-t border-white/10 md:border md:border-white/5 overflow-hidden flex flex-col transition-all duration-300 opacity-100 md:opacity-90 hover:md:opacity-100 max-md:w-full max-md:bottom-0 max-md:left-0 max-md:rounded-t-2xl max-md:rounded-b-none max-md:top-auto max-md:max-h-[70vh] md:w-80 md:left-6 md:top-24 md:rounded-lg shadow-2xl md:shadow-none pb-4 md:pb-0 pointer-events-auto">
+        <div className="absolute z-[40] bg-[#121212]/95 md:bg-[#121212]/30 backdrop-blur-xl md:backdrop-blur-md border-t border-white/10 md:border md:border-white/5 overflow-hidden flex flex-col transition-all duration-300 opacity-100 md:opacity-90 hover:md:opacity-100 max-md:w-full max-md:bottom-0 max-md:left-0 max-md:rounded-t-2xl max-md:rounded-b-none max-md:top-auto max-md:max-h-[35dvh] md:w-80 md:left-6 md:top-24 md:rounded-lg shadow-2xl md:shadow-none pb-4 md:pb-0 pointer-events-auto">
 
           {/* Portrait Header */}
-          <div className="relative w-full bg-transparent">
+          <div className="relative w-full bg-transparent max-md:p-4 max-md:flex max-md:items-center max-md:gap-4 max-md:border-b max-md:border-white/5 shrink-0">
             {selectedNode.avatar_url ? (
               <Image
                 src={selectedNode.avatar_url}
                 alt={selectedNode.name}
                 width={320}
                 height={400}
-                className="w-full h-full object-cover aspect-[4/5]"
+                className="object-cover md:w-full md:h-full md:aspect-[4/5] max-md:w-14 max-md:h-14 max-md:rounded-full max-md:border max-md:border-white/10"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-[#A3A3A3] text-6xl font-bold font-mono border-b border-white/5">
+              <div className="md:w-full md:h-full flex items-center justify-center text-[#A3A3A3] md:text-6xl max-md:text-2xl font-bold font-mono md:border-b md:border-white/5 max-md:w-14 max-md:h-14 max-md:rounded-full max-md:bg-white/[0.05] max-md:border max-md:border-white/10 shrink-0">
                 {selectedNode.name.charAt(0).toUpperCase()}
               </div>
             )}
@@ -702,18 +702,18 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
             {/* Close Button */}
             <button
               onClick={() => setSelectedNodeId(null)}
-              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-black/20 hover:bg-black/55 text-white/80 hover:text-white rounded-full border border-white/10 backdrop-blur-sm transition-all z-20"
+              className="absolute md:top-4 md:right-4 max-md:top-3 max-md:right-3 w-8 h-8 flex items-center justify-center bg-black/20 hover:bg-black/55 text-white/80 hover:text-white rounded-full border border-white/10 backdrop-blur-sm transition-all z-20"
             >
               ✕
             </button>
 
             {/* Gradient Overlay & Name */}
-            <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-[#121212]/70 via-[#121212]/30 to-transparent pt-20 pb-2 px-3">
-              <h2 className="text-3xl font-bold text-[#EFEFEF] truncate tracking-tight">
+            <div className="md:absolute md:bottom-0 md:left-0 md:w-full md:bg-gradient-to-t md:from-[#121212]/70 md:via-[#121212]/30 md:to-transparent md:pt-20 md:pb-2 md:px-3 flex-1 min-w-0">
+              <h2 className="text-xl md:text-3xl font-bold text-[#EFEFEF] truncate tracking-tight pr-8">
                 {selectedNode.name}
               </h2>
               {selectedNode.hometown && (
-                <p className="text-sm text-[#A3A3A3] uppercase tracking-wider font-medium mt-1 truncate">
+                <p className="text-[10px] md:text-sm text-[#A3A3A3] uppercase tracking-wider font-medium md:mt-1 truncate">
                   {selectedNode.hometown}
                 </p>
               )}
@@ -731,8 +731,8 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
 
             {/* Battle Statistics */}
             <div>
-              <p className="text-xs text-[#A3A3A3] uppercase tracking-widest mb-3 font-medium">Battle Statistics</p>
-              <div className="grid grid-cols-2 gap-2">
+              <p className="text-xs text-[#A3A3A3] uppercase tracking-widest mb-3 font-medium max-md:hidden">Battle Statistics</p>
+              <div className="grid grid-cols-2 gap-2 max-md:hidden">
                 <div className="bg-white/[0.02] p-3 rounded-md border border-white/5 flex flex-col justify-between transition-all hover:bg-white/[0.04]">
                   <p className="text-[10px] text-[#A3A3A3] uppercase tracking-wider">Matches</p>
                   <p className="text-xl font-mono text-[#EFEFEF] mt-1">{nodeStats[selectedNode.id]?.total || 0}</p>
@@ -751,6 +751,28 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
                   <p className="text-[10px] text-[#A3A3A3] uppercase tracking-wider">Losses</p>
                   <p className="text-xl font-mono text-[#f87171] mt-1">{nodeStats[selectedNode.id]?.losses || 0}</p>
                 </div>
+              </div>
+
+              {/* Compact Mobile Stats */}
+              <div className="md:hidden flex items-center justify-between bg-white/[0.03] border border-white/5 rounded-md px-3 py-2 mt-1">
+                 <div className="flex items-center gap-1.5" title="Total Matches">
+                   <span className="text-xs">⚔️</span>
+                   <span className="text-sm font-mono text-[#EFEFEF]">{nodeStats[selectedNode.id]?.total || 0}</span>
+                 </div>
+                 <div className="flex items-center gap-1.5" title="Wins">
+                   <span className="text-xs">✅</span>
+                   <span className="text-sm font-mono text-[#4ade80]">{nodeStats[selectedNode.id]?.wins || 0}</span>
+                 </div>
+                 <div className="flex items-center gap-1.5" title="Losses">
+                   <span className="text-xs">❌</span>
+                   <span className="text-sm font-mono text-[#f87171]">{nodeStats[selectedNode.id]?.losses || 0}</span>
+                 </div>
+                 <div className="flex items-center gap-1.5 border-l border-white/10 pl-3" title="Win Rate">
+                   <span className="text-[10px] text-[#A3A3A3] uppercase tracking-wider font-bold">WR</span>
+                   <span className="text-sm font-mono font-bold" style={{ color: getWinRateColor(nodeStats[selectedNode.id]?.winRate || 0) }}>
+                     {(nodeStats[selectedNode.id]?.winRate * 100).toFixed(0)}%
+                   </span>
+                 </div>
               </div>
             </div>
           </div>
@@ -771,14 +793,14 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
         const targetNode = graphData.nodes.find(n => n.id === targetId);
 
         return (
-          <div className="absolute z-[40] bg-[#121212]/95 md:bg-[#121212]/30 backdrop-blur-xl md:backdrop-blur-md border-t border-white/10 md:border md:border-white/5 overflow-hidden flex flex-col transition-all duration-300 opacity-100 md:opacity-90 hover:md:opacity-100 max-md:w-full max-md:bottom-0 max-md:left-0 max-md:rounded-t-2xl max-md:rounded-b-none max-md:top-auto max-md:max-h-[70vh] md:w-80 md:left-6 md:top-24 md:rounded-lg shadow-2xl md:shadow-none pb-4 md:pb-0 pointer-events-auto">
+          <div className="absolute z-[40] bg-[#121212]/95 md:bg-[#121212]/30 backdrop-blur-xl md:backdrop-blur-md border-t border-white/10 md:border md:border-white/5 overflow-hidden flex flex-col transition-all duration-300 opacity-100 md:opacity-90 hover:md:opacity-100 max-md:w-full max-md:bottom-0 max-md:left-0 max-md:rounded-t-2xl max-md:rounded-b-none max-md:top-auto max-md:max-h-[35dvh] md:w-80 md:left-6 md:top-24 md:rounded-lg shadow-2xl md:shadow-none pb-4 md:pb-0 pointer-events-auto">
             {/* Matchup Header */}
-            <div className="relative w-full bg-transparent aspect-[16/10] overflow-hidden flex items-center justify-center border-b border-white/5 shrink-0">
+            <div className="relative w-full bg-transparent md:aspect-[16/10] overflow-hidden flex flex-col md:items-center justify-center border-b border-white/5 shrink-0 max-md:py-4">
               {/* Background Graphic or Gradient */}
               <div className="absolute inset-0 bg-gradient-to-br from-[#1E293B] via-[#0F172A] to-[#1E293B] opacity-50" />
 
               {/* Matchup Avatars */}
-              <div className="relative z-10 flex items-center gap-6 mb-8 mt-2">
+              <div className="relative z-10 flex items-center justify-center gap-4 md:gap-6 md:mb-8 md:mt-2">
                 {/* Source Emcee */}
                 <div className="flex flex-col items-center">
                   {sourceNode?.avatar_url ? (
@@ -787,17 +809,17 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
                       alt={sourceName}
                       width={56}
                       height={56}
-                      className="w-14 h-14 rounded-full object-cover border-2 border-[#4ade80]/80 shadow-md"
+                      className="w-12 h-12 md:w-14 md:h-14 rounded-full object-cover border-2 border-[#4ade80]/80 shadow-md"
                     />
                   ) : (
-                    <div className="w-14 h-14 rounded-full bg-white/[0.05] border-2 border-[#4ade80]/80 flex items-center justify-center text-[#EFEFEF] font-bold text-lg shadow-md font-mono">
+                    <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/[0.05] border-2 border-[#4ade80]/80 flex items-center justify-center text-[#EFEFEF] font-bold text-lg shadow-md font-mono">
                       {sourceName.charAt(0).toUpperCase()}
                     </div>
                   )}
                 </div>
 
                 {/* Matchup Type Indicator */}
-                <div className="px-2.5 py-1 bg-black/40 backdrop-blur-sm rounded-full border border-white/5 text-[10px] font-bold text-[#A3A3A3] uppercase tracking-wider">
+                <div className="px-2 py-0.5 md:px-2.5 md:py-1 bg-black/40 backdrop-blur-sm rounded-full border border-white/5 text-[9px] md:text-[10px] font-bold text-[#A3A3A3] uppercase tracking-wider">
                   {selectedLink.type === 'DEFEATED' ? 'def.' : 'vs'}
                 </div>
 
@@ -809,10 +831,10 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
                       alt={targetName}
                       width={56}
                       height={56}
-                      className="w-14 h-14 rounded-full object-cover border-2 border-[#f87171]/80 shadow-md"
+                      className="w-12 h-12 md:w-14 md:h-14 rounded-full object-cover border-2 border-[#f87171]/80 shadow-md"
                     />
                   ) : (
-                    <div className="w-14 h-14 rounded-full bg-white/[0.05] border-2 border-[#f87171]/80 flex items-center justify-center text-[#EFEFEF] font-bold text-lg shadow-md font-mono">
+                    <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/[0.05] border-2 border-[#f87171]/80 flex items-center justify-center text-[#EFEFEF] font-bold text-lg shadow-md font-mono">
                       {targetName.charAt(0).toUpperCase()}
                     </div>
                   )}
@@ -822,21 +844,18 @@ export default function GraphClient({ graphData, mode }: { graphData: GraphData,
               {/* Close Button */}
               <button
                 onClick={() => setSelectedLink(null)}
-                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-black/20 hover:bg-black/55 text-white/80 hover:text-white rounded-full border border-white/10 backdrop-blur-sm transition-all z-20"
+                className="absolute md:top-4 md:right-4 max-md:top-3 max-md:right-3 w-8 h-8 flex items-center justify-center bg-black/20 hover:bg-black/55 text-white/80 hover:text-white rounded-full border border-white/10 backdrop-blur-sm transition-all z-20"
               >
                 ✕
               </button>
 
               {/* Gradient Overlay & Name */}
-              <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-[#121212]/70 via-[#121212]/30 to-transparent pt-12 pb-2 px-3">
-                <h2 className="text-xl font-bold text-[#EFEFEF] truncate tracking-tight">
-                  {selectedLink.battle_name || 'Battle Details'}
+              <div className="md:absolute md:bottom-0 md:left-0 md:w-full md:bg-gradient-to-t md:from-[#121212]/70 md:via-[#121212]/30 md:to-transparent md:pt-12 md:pb-2 px-3 text-center max-md:mt-3">
+                <h2 className="text-sm md:text-lg font-bold text-[#EFEFEF] truncate tracking-tight">
+                  <span className="text-[#4ade80]">{sourceName}</span>
+                  <span className="text-[#777] mx-2 font-normal text-xs md:text-sm">{selectedLink.type === 'DEFEATED' ? 'def.' : 'vs'}</span>
+                  <span className="text-[#f87171]">{targetName}</span>
                 </h2>
-                {selectedLink.event_name && (
-                  <p className="text-xs text-[#A3A3A3] uppercase tracking-wider font-medium mt-1 truncate">
-                    {selectedLink.event_name}
-                  </p>
-                )}
               </div>
             </div>
 

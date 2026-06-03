@@ -13,7 +13,7 @@ export default async function VisualizationAdminPage() {
   const graphData = result.success && result.data ? result.data : { nodes: [], links: [] };
 
   return (
-    <div className="w-full h-screen bg-black text-white relative overflow-hidden">
+    <div className="w-full h-[100dvh] bg-black text-white relative overflow-hidden">
       {/* Top-Center Mode Navigation */}
       <div className="absolute top-4 max-md:top-auto max-md:bottom-6 left-1/2 -translate-x-1/2 z-[60] flex gap-0.5 p-1 bg-[#121212]/30 backdrop-blur-md border border-white/5 rounded-md opacity-80 hover:opacity-100 transition-opacity duration-300">
         <Link
