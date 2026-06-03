@@ -17,6 +17,8 @@ const slides: Slide[] = [
     title: 'fliptop.3d',
     subtitle: 'ROUND.01 // THE VISUAL CANVAS',
     description: 'An interactive WebGL 3D network graphing interface designed to explore, analyze, and manage the complex network of rap battles, emcees, and events in the Philippines.',
+    bullets:
+      ['By Kristian Mark Surat'],
     imageUrl: '/assets/shehyee-smugglaz.jpg'
   },
   {
@@ -46,19 +48,37 @@ const slides: Slide[] = [
     bullets: [
       'Interactive Node Exploration: Click an Emcee to highlight their battle history, win/loss paths, and connected opponents.',
       '3D Camera Controls: Pan, zoom, and rotate the graph to inspect complex battle networks from different angles.',
-      'Path Highlights: Instantly analyze matchup outcomes with green edges for wins and red edges for losses.'
+      'Path Highlights: Instantly analyze matchup outcomes with green edges for wins and red edges for losses.',
     ],
     imageUrl: '/assets/neo4j-3.png'
   },
   {
+    title: 'Limitations',
+    subtitle: 'ROUND.05 // I HIT A WALL',
+    description: 'Only assures 91.4% of judged data.',
+    bullets: [
+      'Only assures 91.4% of judged data.',
+      'Tournament data might be lacking.',
+    ],
+  },
+  {
     title: 'Architecture & Performance',
-    subtitle: 'ROUND.05 // PERFORMANCE PIPELINE',
+    subtitle: 'ROUND.06 // PERFORMANCE PIPELINE',
     bullets: [
       'Supabase: Relational database acting as the main source of truth.',
       'Neo4j: Graph database backend mapping nodes and edge relations.',
       'Next.js & R3F: Server action pipelines rendering a beautiful 3D Force-Graph canvas.',
       'Upstash Redis: Fast read-through cache layer reducing Neo4j database load for instant public page delivery.'
     ]
+  },
+  {
+    title: 'fliptop3d.vercel.app',
+    subtitle: 'ROUND.06 // FlipTop3d',
+    bullets: [
+      'Developed with ❤️ by: Shan Surat',
+      'Requirement for: Final Project for LIS 198 | Data Structures'
+    ],
+    imageUrl: '/assets/qrcode.png'
   }
 ];
 
@@ -191,7 +211,7 @@ function PresentationPageInner() {
                 src={currentSlide.imageUrl}
                 alt={currentSlide.title}
                 fill
-                className="object-cover aspect-video md:aspect-square filter grayscale brightness-90 hover:grayscale-0 transition-all duration-300"
+                className="object-contain aspect-video md:aspect-square filter grayscale brightness-90 hover:grayscale-0 transition-all duration-300"
               />
             </div>
           )}
