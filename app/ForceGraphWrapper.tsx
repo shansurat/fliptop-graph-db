@@ -669,7 +669,7 @@ export default function GraphClient({ graphData }: { graphData: GraphData }) {
         </div>)} */}
 
       {selectedNode && selectedNode.group === 'Emcee' && (
-        <div className="absolute z-[40] bg-[#121212]/95 md:bg-[#121212]/30 backdrop-blur-xl md:backdrop-blur-md border-t border-white/10 md:border md:border-white/5 overflow-hidden flex flex-col transition-all duration-300 opacity-100 md:opacity-90 hover:md:opacity-100 max-md:w-full max-md:bottom-0 max-md:left-0 max-md:rounded-t-2xl max-md:rounded-b-none max-md:top-auto max-md:max-h-[35dvh] md:w-80 md:left-6 md:top-24 md:rounded-lg shadow-2xl md:shadow-none pb-20 md:pb-0 pointer-events-auto">
+        <div className="absolute z-[40] bg-[#121212]/95 md:bg-[#121212]/50 backdrop-blur-xl md:backdrop-blur-2xl border-t border-white/10 md:border md:border-white/10 overflow-hidden flex flex-col transition-all duration-300 opacity-100 md:opacity-95 hover:md:opacity-100 max-md:w-full max-md:bottom-0 max-md:left-0 max-md:rounded-t-2xl max-md:rounded-b-none max-md:top-auto max-md:max-h-[35dvh] md:w-80 md:left-6 md:top-24 md:rounded-xl shadow-2xl pb-20 md:pb-0 pointer-events-auto ring-1 ring-white/5">
 
           {/* Portrait Header */}
           <div className="relative w-full bg-transparent max-md:p-4 max-md:flex max-md:items-center max-md:gap-4 max-md:border-b max-md:border-white/5 shrink-0">
@@ -682,9 +682,7 @@ export default function GraphClient({ graphData }: { graphData: GraphData }) {
                 className="object-cover md:w-full md:h-full md:aspect-[4/5] max-md:w-14 max-md:h-14 max-md:rounded-full max-md:border max-md:border-white/10"
               />
             ) : (
-              <div className="md:w-full md:h-full flex items-center justify-center text-[#A3A3A3] md:text-6xl max-md:text-2xl font-bold font-mono md:border-b md:border-white/5 max-md:w-14 max-md:h-14 max-md:rounded-full max-md:bg-white/[0.05] max-md:border max-md:border-white/10 shrink-0">
-                {selectedNode.name.charAt(0).toUpperCase()}
-              </div>
+              <div className="md:w-full md:h-full md:aspect-[4/5] bg-gradient-to-br from-[#2a2a2a] to-[#0a0a0a] max-md:w-14 max-md:h-14 max-md:rounded-full max-md:border max-md:border-white/10 shrink-0"></div>
             )}
 
             {/* Close Button */}
@@ -696,20 +694,18 @@ export default function GraphClient({ graphData }: { graphData: GraphData }) {
             </button>
 
             {/* Gradient Overlay & Name */}
-            <div className="md:absolute md:bottom-0 md:left-0 md:w-full md:bg-gradient-to-t md:from-[#121212]/70 md:via-[#121212]/30 md:to-transparent md:pt-20 md:pb-2 md:px-3 flex-1 min-w-0">
-              <h2 className="text-xl md:text-3xl font-bold text-[#EFEFEF] truncate tracking-tight pr-8">
+            <div className="md:absolute md:bottom-0 md:left-0 md:w-full md:bg-gradient-to-t md:from-[#121212] md:via-[#121212]/80 md:to-transparent md:pt-24 md:pb-4 md:px-5 flex-1 min-w-0">
+              <h2 className="text-xl md:text-3xl font-bold text-[#EFEFEF] truncate tracking-tight pr-8 drop-shadow-lg">
                 {selectedNode.name}
               </h2>
-              {selectedNode.hometown && (
-                <p className="text-[10px] md:text-sm text-[#A3A3A3] uppercase tracking-wider font-medium md:mt-1 truncate">
-                  {selectedNode.hometown}
-                </p>
-              )}
+              <p className="text-[10px] md:text-sm text-[#A3A3A3] uppercase tracking-wider font-medium md:mt-1 truncate">
+                {selectedNode.hometown || "Location Unknown"}
+              </p>
             </div>
           </div>
 
           {/* Details Body */}
-          <div className="px-3 pb-3 pt-2 space-y-5">
+          <div className="px-5 pb-5 pt-3 space-y-5">
             {selectedNode.total_views != null && (
               <div className="flex justify-between items-end border-b border-white/5 pb-3">
                 <p className="text-xs text-[#A3A3A3] uppercase tracking-widest font-medium">Total Views</p>
