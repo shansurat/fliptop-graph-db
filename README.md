@@ -1,9 +1,10 @@
 # fliptop.3d: A Graph-Based Visualization of Battle Rap Networks
 
-**Course:** Final Requirement for LIS 198: Data Structures  
 **Repository:** [https://github.com/shansurat/fliptop.3d](https://github.com/shansurat/fliptop.3d)
 
 ---
+
+![Fliptop.3d Interactive Graph View](public/readme/home.png)
 
 ## Introduction and Context
 
@@ -13,9 +14,18 @@ This project posits that the complex, interconnected history of these battle out
 
 ---
 
+## Systems Analysis and Design (SAD)
+
+For a comprehensive technical overview of the project, including database schemas, UML diagrams, and detailed architectural decisions, please refer to the official Systems Analysis and Design document:
+- [SAD Documentation (PDF)](public/readme/docs.pdf)
+
+---
+
 ## System Architecture and Data Structures
 
 The system architecture utilizes a Command Query Responsibility Segregation (CQRS) inspired pattern to separate relational data storage from graph-based read models.
+
+![Deployment Architecture](public/readme/deployment_diagram.png)
 
 1. **Relational Source of Truth (Supabase/PostgreSQL):** Raw data pertaining to Emcee profiles and Battle outcomes are initially stored in normalized relational tables. This ensures data integrity and simplifies administrative data entry.
 2. **Graph Read Model (Neo4j):** Data is synchronized into a Neo4j graph database. The schema is strictly defined:
@@ -30,7 +40,12 @@ The system architecture utilizes a Command Query Responsibility Segregation (CQR
 - **Interactive 3D Graph Rendering:** Utilizes WebGL (via `react-force-graph-3d` and Three.js) to map the parsed graph data into a spatial physics-based layout.
 - **Degree Centrality Visualization:** The rendering algorithm dynamically scales node sizes based on an Emcee's total number of edges (battle count). This visualizes a structural hierarchy, instantly distinguishing veteran participants from newcomers.
 - **Node-Specific Subgraph Highlighting:** Selecting a node triggers a UI overlay containing the Emcee's aggregated statistics and dims all unrelated edges in the 3D space to emphasize the selected entity's direct battle network.
+  
+  ![Emcee Subgraph Highlighting](public/readme/emcee.png)
+
 - **Administrative Synchronization Module:** A secure dashboard that allows users to perform CRUD operations on the relational database and subsequently execute synchronization routines that map the relational data into graph structures (`MERGE` operations).
+
+  ![Admin Dashboard](public/readme/admin_emcees.png)
 
 ---
 
